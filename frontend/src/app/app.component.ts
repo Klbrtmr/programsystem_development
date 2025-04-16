@@ -7,10 +7,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class AppComponent {
   message = '';
-
-  constructor(private http: HttpClient) {
-    this.http.get('http://localhost:3000').subscribe((res: any) => {
-      this.message = res;
-    });
+  constructor(http: HttpClient) {
+    http.get('http://localhost:3000', { responseType: 'text' }).subscribe(data => this.message = data);
   }
 }

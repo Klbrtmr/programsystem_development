@@ -1,3 +1,0 @@
-# Például a backend környezeti változóihoz
-NODE_ENV=development
-MONGO_URI=mongodb://mongo:27017/mean-app

@@ -2,11 +2,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 
-require('dotenv').config();
-
 const app = express();
 const PORT = 3000;
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/mean-app';
+const MONGO_URI = 'mongodb://mongo:27017/mean-app';
 
 app.use(cors());
 app.use(express.json());
