@@ -1,0 +1,22 @@
+<form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+    <label>Email:</label>
+    <input formControlName="email" />
+    <div *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
+      Enter a valid email.
+    </div>
+  
+    <label>Username:</label>
+    <input formControlName="username" />
+  
+    <label>Name:</label>
+    <input formControlName="name" />
+  
+    <label>Password:</label>
+    <input type="password" formControlName="password" />
+  
+    <label>Is Admin:</label>
+    <input type="checkbox" formControlName="isAdmin" />
+  
+    <button type="submit" [disabled]="registerForm.invalid">Register</button>
+  </form>
+  
