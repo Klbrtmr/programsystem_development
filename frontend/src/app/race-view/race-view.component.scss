@@ -1,0 +1,214 @@
+table {
+    margin: auto;
+    width: 80%;
+    margin-top: 20px;
+}
+
+table td {
+    box-shadow: 5px 5px 5px #b1b1b1;
+}
+
+th, td {
+    text-align: left;
+    padding: 8px;
+}
+
+th {
+    background-color: #6cd46f;
+    color: #333;
+}
+
+h2 {
+    text-align: center;
+    margin: 20px;
+}
+
+.table-container {
+    margin: 20px 0;
+}
+
+.race-table {
+    border: 1px solid #bbbbbb;
+    border-radius: 10px;
+    margin-top: 80px;
+    margin-bottom: 20px;
+    width: 90%;
+    max-width: 1000px;
+}
+
+.race-table th {
+    display: flex;
+    justify-content: space-between;
+    border-radius: 10px;
+}
+
+th span {
+    margin: 0 20px;
+}
+
+.comments-table {
+    width: 80%;
+    margin: auto;
+    width: 90%;
+    max-width: 1000px;
+}
+
+.comments-table tbody {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+}
+
+.comments-table th {
+    text-align: center;
+}
+
+.comments-table tr {
+    padding: 10px;
+    min-width: 100%;
+}
+
+.comments-table tr td {
+    display: inline-block;
+    width: 100%;
+    padding: 0;
+    border-radius: 10px;
+}
+
+mat-card {
+    border: 1px solid black;
+    border-radius: 10px;
+}
+
+mat-card-header {
+    background-color: cornflowerblue;
+    border-radius: 10px 10px 0 0;
+    padding: 10px;
+}
+
+.race-table mat-card-header {
+    background-color: #6cd46f;
+    border-radius: 10px 10px 0 0;
+    padding: 10px;
+}
+
+mat-card-content {
+    padding: 15px;
+}
+
+::ng-deep img {
+        display: block !important;
+        margin: auto !important;
+        max-width: 500px !important;
+}
+
+mat-card-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 10px 0;
+    min-height: 24px !important;
+    div {
+        display: flex;
+        align-items: center;
+    }
+}
+
+.race-table mat-card-actions {
+    padding: 10px 10px 0;
+    display: flex;
+    justify-content: space-between;
+    min-height: 24px !important;
+}
+
+mat-icon {
+    color: cornflowerblue;
+    padding: 3px 5px;
+    margin: 0 5px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+#delete-icon {
+    color: red;
+}
+
+mat-icon:hover {
+    background-color: #ccc;
+}
+
+mat-card-footer {
+    padding: 0 15px 5px;
+}
+
+mat-card-footer div {
+    display: flex;
+    justify-content: space-between;
+}
+
+.new-comment mat-card-header {
+    background-color: rgb(76, 111, 176);
+    color: white;
+    font-weight: 500;
+}
+
+.new-comment input {
+    margin-top: 10px;
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.new-comment mat-card-actions {
+    padding: 10px;
+}
+
+.new-comment button {
+    margin: 0 10px 10px 10px;
+    padding: 8px 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: cornflowerblue;
+    color: white;
+}
+
+#comment {
+    width: 99%;
+    resize: none;
+}
+
+.my-comment {
+    background-color: rgb(68, 217, 237);
+}
+
+.navigate {
+    color: cornflowerblue;
+    text-decoration: underline;
+    cursor: pointer;
+    &:hover {
+        color: rgb(70, 102, 162);
+    }
+}
+
+.script-detected {
+    color: red;
+}
+
+.check {
+    color: white;
+    background-color: #6cd46f !important;
+    &:hover {
+        background-color: #4a9e4a !important;
+    }
+}
+
+.cancel {
+    color: white;
+    background-color: red !important;
+    &:hover {
+        background-color: rgb(158, 68, 68) !important;
+    }
+}

@@ -8,7 +8,7 @@
             <!-- <button (click)="navigate('/my-topics')" *ngIf="isAuthenticated">My Topics</button> -->
             <button (click)="navigate('/user-management')" *ngIf="isAuthenticated && isAdmin">User Management</button>
             
-            <button (click)="navigate('/login')" *ngIf="!isAuthenticated">Sign in</button>
+            <button (click)="navigate('/login')" *ngIf="!isAuthenticated">Login</button>
             <button (click)="navigate('/register')" *ngIf="!isAuthenticated">Register</button>
             <button (click)="logout()" *ngIf="isAuthenticated" type="reset">Log out</button>
         </div>

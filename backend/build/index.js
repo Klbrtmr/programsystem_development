@@ -1,35 +1,4 @@
 "use strict";
-/*
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-
-const app = express();
-const PORT = 3000;
-const MONGO_URI = 'mongodb://mongo:27017/mean-app';
-
-app.use(cors());
-app.use(express.json());
-const authRouter = require('./routes/auth');
-app.use('/api/auth', authRouter);
-
-mongoose.connect(MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-}).then(() => {
-  console.log('MongoDB kapcsolódva');
-}).catch(err => {
-  console.error('MongoDB kapcsolódási hiba:', err);
-});
-
-app.get('/', (req, res) => {
-  res.send('Backend működik!');
-});
-
-app.listen(PORT, () => {
-  console.log(`Szerver fut a ${PORT}-es porton`);
-});
-*/
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -98,7 +67,6 @@ app.listen(port, () => {
 function checkAdminIsExists() {
     return __awaiter(this, void 0, void 0, function* () {
         const isAdminExists = yield User_1.User.findOne({ email: "admin@admin.com" });
-        // const isAdminExists = true;
         if (!isAdminExists) {
             const adminUser = new User_1.User({ email: "admin@admin.com", password: "adminPwd123", isAdmin: true });
             adminUser.save().then(_ => {

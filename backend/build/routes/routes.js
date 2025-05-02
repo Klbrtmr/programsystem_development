@@ -189,35 +189,35 @@ const configureRoutes = (passport, router) => {
     //         res.status(500).send('User is not logged in.');
     //     }
     // });
-    // New Topic
-    // router.post('/new_topic', (req: Request, res: Response) => {
-    //     const { title } = req.body;
-    // 
-    //     if (req.isAuthenticated()) {
-    //         const timestamp = new Date();
-    // 
-    //         const topic = new Topic({author: req.user.email, title: title, timestamp: timestamp});
-    // 
-    //         topic.save().then(data => {
-    //             console.log('Topic successfully created.');
-    //             res.status(200).send(data);
-    //         }).catch(error => {
-    //             res.status(500).send(error);
-    //         });
-    //     } else {
-    //         res.status(500).send('User is not logged in.');
-    //     }
-    // });
-    // Delete Topic
-    // router.delete('/delete_topic/:topicId', async (req: Request, res: Response) => {
-    //     const topicId = req.params.topicId;
-    //     const deletedTopic = await Topic.findByIdAndDelete(topicId);
-    //     if (deletedTopic) {
-    //         res.status(200).send('Topic successfully deleted.')
-    //     } else {
-    //         res.status(404).send('Topic not found.');
-    //     }
-    // });
+    // New Race
+    router.post('/new_races', (req, res) => {
+        const { trackName, locationName, date } = req.body;
+        if (req.isAuthenticated()) {
+            const race = new Races_1.Races({ trackName: trackName, locationName: locationName, date: date });
+            console.log("Create");
+            console.log(race);
+            race.save().then(data => {
+                console.log('Race successfully created.');
+                res.status(200).send(data);
+            }).catch(error => {
+                res.status(500).send(error);
+            });
+        }
+        else {
+            res.status(500).send('User is not logged in.');
+        }
+    });
+    // Delete Race
+    router.delete('/delete_race/:racesId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        const racesId = req.params.racesId;
+        const deletedRace = yield Races_1.Races.findByIdAndDelete(racesId);
+        if (deletedRace) {
+            res.status(200).send('Race successfully deleted.');
+        }
+        else {
+            res.status(404).send('Race not found.');
+        }
+    }));
     // Edit Topic
     // router.put('/edit_topic/:topicId', async (req: Request, res: Response) => {
     //     const { topicId } = req.params;

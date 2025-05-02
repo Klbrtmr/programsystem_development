@@ -6,7 +6,7 @@ import { Comment } from '../Model/Comment';
 @Injectable({
   providedIn: 'root'
 })
-export class TopicService {
+export class RacesService {
 
   constructor(private http: HttpClient) { }
 
@@ -14,7 +14,7 @@ export class TopicService {
     return this.http.get<Races[]>('http://localhost:3000/app/all_races', {withCredentials: true});
   }
 
-  getTopic(racesId: string) {
+  getRace(racesId: string) {
     return this.http.get<Races>(`http://localhost:3000/app/races/${racesId}`, {withCredentials: true});
   }
 
@@ -22,9 +22,11 @@ export class TopicService {
   //   return this.http.get<Races[]>('http://localhost:3000/app/my_races', {withCredentials: true});
   // }
 
-  newTopic(title: string) {
+  newRace(trackName: string, locationName: string, date: string) {
     const body = new URLSearchParams();
-    body.set('title', title);
+    body.set('trackName', trackName);
+    body.set('locationName', locationName);
+    body.set('date', date);
 
     const headers = new HttpHeaders({
       'Content-Type': 'application/x-www-form-urlencoded'
@@ -33,11 +35,11 @@ export class TopicService {
     return this.http.post<Races>('http://localhost:3000/app/new_races', body, {headers: headers, withCredentials: true});
   }
 
-  deleteTopic(racesId: string) {
-    return this.http.delete(`http://localhost:3000/app/delete_races/${racesId}`, {withCredentials: true, responseType: 'text'});
+  deleteRace(racesId: string) {
+    return this.http.delete(`http://localhost:3000/app/delete_race/${racesId}`, {withCredentials: true, responseType: 'text'});
   }
 
-  editTopic(racesId: string, title: string) {
+  editRace(racesId: string, title: string) {
     const body = new URLSearchParams();
     body.set('title', title);
 
@@ -82,11 +84,11 @@ export class TopicService {
     return this.http.put<Races>(`http://localhost:3000/app/dislike_comment/${racesId}/${commentId}`, {}, {withCredentials: true});
   }
 
-  likeTopic(racesId: string) {
+  likeRace(racesId: string) {
     return this.http.put<Races>(`http://localhost:3000/app/like_races/${racesId}`, {}, {withCredentials: true});
   }
 
-  dislikeTopic(racesId: string) {
+  dislikeRace(racesId: string) {
     return this.http.put<Races>(`http://localhost:3000/app/dislike_races/${racesId}`, {}, {withCredentials: true});
   }
 }
