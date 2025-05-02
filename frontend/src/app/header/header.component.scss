@@ -1,0 +1,55 @@
+div {
+    display: block;
+}
+
+.navbar {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.left-side {
+    margin-left: 20px;
+    color: white;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-size: 2.5em;
+}
+
+.right-side {
+    display: flex;
+    flex-direction: column;
+}
+
+.right-side button {
+    margin-right: 20px;
+    background-color: rgb(78, 78, 175);
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    font-family: cursive;
+    letter-spacing: 1px;
+}
+
+.right-side button:hover {
+    background-color: rgb(52, 52, 116);
+}
+
+.buttons button[type="reset"] {
+    background-color: rgb(211, 76, 76);
+}
+
+.buttons button[type="reset"]:hover {
+    background-color: rgb(129, 45, 45);
+}
+
+@media (max-width: 860px) {
+    .right-side button {
+        display: flex;
+        flex-direction: column;
+        transform: translate(0, 120%);
+        margin-top: 10%;
+    }
+}

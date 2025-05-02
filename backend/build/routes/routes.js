@@ -1,34 +1,42 @@
-import { Router, Request, Response, NextFunction } from 'express';
-import { MainClass } from '../main-class';
-import { PassportStatic, deserializeUser } from 'passport';
-import { User } from '../model/User';
-import { Races } from '../model/Races';
-import { Comment } from '../model/Comment';
-import { json } from 'body-parser';
-import { UsersLikesRaces } from '../model/UsersLikesRaces';
-
-export const configureRoutes = (passport: PassportStatic, router: Router): Router => {    
-
-    router.get('/', (req: Request, res: Response) => {
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.configureRoutes = void 0;
+const User_1 = require("../model/User");
+const Races_1 = require("../model/Races");
+const Comment_1 = require("../model/Comment");
+const UsersLikesRaces_1 = require("../model/UsersLikesRaces");
+const configureRoutes = (passport, router) => {
+    router.get('/', (req, res) => {
         res.write('The server is available at the moment.');
         res.status(200).end(`Wow it's working`);
     });
-
     // User endpoints
     // Log in
-    router.post('/login', (req: Request, res: Response, next: NextFunction) => {
-        passport.authenticate('local', (error: string | null, user: Express.User) => {
+    router.post('/login', (req, res, next) => {
+        passport.authenticate('local', (error, user) => {
             if (error) {
                 res.status(500).send(error);
-            } else {
+            }
+            else {
                 if (!user) {
                     res.status(400).send('User not found.');
-                } else {
-                    req.login(user, (err: string | null) => {
+                }
+                else {
+                    req.login(user, (err) => {
                         if (err) {
                             console.log(err);
                             res.status(500).send('Internal server error.');
-                        } else {
+                        }
+                        else {
                             console.log('Successful login.');
                             res.status(200).send(user);
                         }
@@ -37,18 +45,18 @@ export const configureRoutes = (passport: PassportStatic, router: Router): Route
             }
         })(req, res, next);
     });
-
     // Register
-    router.post('/register', async (req: Request, res: Response ) => {
+    router.post('/register', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const { email, username, name, password, isAdmin } = req.body;
         console.log('Registering user...');
-        const user = new User({email: email, username: username, name: name, password: password, isAdmin: isAdmin});
-        const isExists = await User.findOne( {email: email} );
+        const user = new User_1.User({ email: email, username: username, name: name, password: password, isAdmin: isAdmin });
+        const isExists = yield User_1.User.findOne({ email: email });
         console.log('Checking if user exists...');
         if (isExists) {
             console.log('This email is already taken.');
             res.status(500).send('This email is already taken.');
-        } else {
+        }
+        else {
             user.save().then(data => {
                 console.log('Successfully registration.');
                 res.status(200).send(data);
@@ -56,10 +64,9 @@ export const configureRoutes = (passport: PassportStatic, router: Router): Route
                 res.status(500).send(error);
             });
         }
-    });
-
+    }));
     // Log out
-    router.post('/logout', (req: Request, res: Response) => {
+    router.post('/logout', (req, res) => {
         if (req.isAuthenticated()) {
             req.logout((error) => {
                 if (error) {
@@ -69,81 +76,84 @@ export const configureRoutes = (passport: PassportStatic, router: Router): Route
                 console.log('Successfully logged out.');
                 res.status(200).send('Successfully log out.');
             });
-        } else {
+        }
+        else {
             res.status(500).send('User is not logged in.');
         }
     });
-
     // Delete user
-    router.delete('/delete_user/:userId', async (req: Request, res: Response) => {
+    router.delete('/delete_user/:userId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const userId = req.params.userId;
-        const deletedUser = await User.findByIdAndDelete(userId);
+        const deletedUser = yield User_1.User.findByIdAndDelete(userId);
         if (deletedUser) {
-            res.status(200).send('User successfully deleted.')
-        } else {
+            res.status(200).send('User successfully deleted.');
+        }
+        else {
             res.status(404).send('User not found.');
         }
-    });
-
+    }));
     // Get All Users
-    router.get('/getAllUsers', (req: Request, res: Response) => {
+    router.get('/getAllUsers', (req, res) => {
         if (req.isAuthenticated()) {
-            const query = User.find();
+            const query = User_1.User.find();
             query.then(data => {
                 res.status(200).send(data);
             }).catch(error => {
                 console.log(error);
                 res.status(500).send('Internal server error.');
-            })
-        } else {
+            });
+        }
+        else {
             res.status(500).send('User is not logged in.');
         }
     });
-
     // Check user is authenticated
-    router.get('/checkAuth', (req: Request, res: Response) => {
+    router.get('/checkAuth', (req, res) => {
         if (req.isAuthenticated()) {
             res.status(200).send(true);
-        } else {
+        }
+        else {
             res.status(500).send(false);
         }
     });
-
     // Check user is admin
-    router.get('/isAdmin', (req: Request, res: Response) => {
+    router.get('/isAdmin', (req, res) => {
         if (req.isAuthenticated()) {
             if (req.user.isAdmin) {
                 res.status(200).send(true);
-            } else {
+            }
+            else {
                 res.status(500).send(false);
             }
-        } else {
+        }
+        else {
             res.status(500).send(false);
         }
     });
-
     // Get current user
-    router.get('/currentUser', (req: Request, res: Response) => {
+    router.get('/currentUser', (req, res) => {
         if (req.isAuthenticated()) {
             res.status(200).send(req.user);
-        } else {
+        }
+        else {
             res.status(500).send('User is not logged in.');
         }
     });
-
     // Race endpoints
     // One specific Race
-    router.get('/races/:racesId', async (req: Request, res: Response) => {
+    router.get('/races/:racesId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const { racesId } = req.params;
         try {
-            const race = await Races.findById(racesId);
+            const race = yield Races_1.Races.findById(racesId);
             if (race) {
                 console.log('Specific race found.');
                 res.status(200).send(race);
-            } else {
+            }
+            else {
                 res.status(404).send('Race not found.');
             }
-        } catch (error) {
+        }
+        catch (error) {
             res.status(500).send('Internal server error.');
         }
         /*const topic = await Topic.findById(topicId);
@@ -153,19 +163,18 @@ export const configureRoutes = (passport: PassportStatic, router: Router): Route
         } else {
             res.status(404).send('Topic not found.');
         }*/
-    });
-
+    }));
     // All Races
-    router.get('/all_races', async (req: Request, res: Response) => {
-        const races = await Races.find();
+    router.get('/all_races', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        const races = yield Races_1.Races.find();
         if (races) {
             console.log('All the Races successfully retrieved.');
             res.status(200).send(races);
-        } else {
+        }
+        else {
             res.status(404).send('No races found.');
         }
-    });
-
+    }));
     // My Topics
     // router.get('/my_topics', async (req: Request, res: Response) => {
     //     if (req.isAuthenticated()) {
@@ -180,16 +189,15 @@ export const configureRoutes = (passport: PassportStatic, router: Router): Route
     //         res.status(500).send('User is not logged in.');
     //     }
     // });
-
     // New Topic
     // router.post('/new_topic', (req: Request, res: Response) => {
     //     const { title } = req.body;
-// 
+    // 
     //     if (req.isAuthenticated()) {
     //         const timestamp = new Date();
-// 
+    // 
     //         const topic = new Topic({author: req.user.email, title: title, timestamp: timestamp});
-// 
+    // 
     //         topic.save().then(data => {
     //             console.log('Topic successfully created.');
     //             res.status(200).send(data);
@@ -200,7 +208,6 @@ export const configureRoutes = (passport: PassportStatic, router: Router): Route
     //         res.status(500).send('User is not logged in.');
     //     }
     // });
-
     // Delete Topic
     // router.delete('/delete_topic/:topicId', async (req: Request, res: Response) => {
     //     const topicId = req.params.topicId;
@@ -211,7 +218,6 @@ export const configureRoutes = (passport: PassportStatic, router: Router): Route
     //         res.status(404).send('Topic not found.');
     //     }
     // });
-    
     // Edit Topic
     // router.put('/edit_topic/:topicId', async (req: Request, res: Response) => {
     //     const { topicId } = req.params;
@@ -232,139 +238,127 @@ export const configureRoutes = (passport: PassportStatic, router: Router): Route
     //         res.status(500).send('User is not logged in.');
     //     }
     // });
-
     // Like Race
-    router.put('/like_races/:racesId', async (req: Request, res: Response) => {
+    router.put('/like_races/:racesId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const { racesId } = req.params;
-
         if (req.isAuthenticated()) {
-            const username = new UsersLikesRaces({ username: req.user.email });
-            const race = await Races.findById(racesId);
+            const username = new UsersLikesRaces_1.UsersLikesRaces({ username: req.user.email });
+            const race = yield Races_1.Races.findById(racesId);
             if (race) {
                 if (race.usersLikesRaces.includes(username)) {
                     res.status(400).send('User already liked this race.');
-                } else {
+                }
+                else {
                     race.usersLikesRaces.push(username);
-                    await race.save();
+                    yield race.save();
                     res.status(200).send(race);
                 }
-            } else {
+            }
+            else {
                 res.status(404).send('Race not found.');
             }
-        } else {
+        }
+        else {
             res.status(500).send('User is not logged in.');
         }
-    });
-
+    }));
     // Dislike Race
-    router.put('/dislike_races/:racesId', async (req: Request, res: Response) => {
+    router.put('/dislike_races/:racesId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const { racesId } = req.params;
-
         if (req.isAuthenticated()) {
-            const username = new UsersLikesRaces({ username: req.user.email });
-            const race = await Races.findById(racesId);
+            const username = new UsersLikesRaces_1.UsersLikesRaces({ username: req.user.email });
+            const race = yield Races_1.Races.findById(racesId);
             if (race) {
                 const index = race.usersLikesRaces.findIndex(user => user.username === username.username);
                 if (index !== -1) {
                     race.usersLikesRaces.splice(index, 1);
-                    await race.save();
+                    yield race.save();
                     res.status(200).send(race);
-                } else {
+                }
+                else {
                     res.status(400).send('User has not liked this race.');
                 }
-            } else {
+            }
+            else {
                 res.status(404).send('Races not found.');
             }
-        } else {
+        }
+        else {
             res.status(500).send('User is not logged in.');
         }
-    });
-
+    }));
     // Comment endpoints
     // My comments in the Races
-    router.get('/my_comments', async (req: Request, res: Response) => {
+    router.get('/my_comments', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const { author } = req.body;
-
-        const races = await Races.find();
+        const races = yield Races_1.Races.find();
         if (races) {
             /*const userComments = races.reduce((acc, races) => {
                 const comments: any = races.comments.filter(comment => comment.author === author);
                 return acc.concat(comments);
             }, []);
             console.log(userComments);*/
-
             const userRaces = races.map(races => {
                 const userComments = races.comments.filter(comment => comment.author === author);
                 if (userComments.length > 0) {
-                    return { ...races.toObject(), comments: userComments };
-                } else {
+                    return Object.assign(Object.assign({}, races.toObject()), { comments: userComments });
+                }
+                else {
                     return null;
                 }
             }).filter(races => races !== null);
-            
             res.status(200).send(userRaces);
-        } else {
+        }
+        else {
             res.status(404).send('No comments found.');
         }
-    });
-
+    }));
     // New Comment
-    router.post('/new_comment/:racesId', async (req: Request, res: Response) => {
+    router.post('/new_comment/:racesId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         if (req.isAuthenticated()) {
             const racesId = req.params.racesId;
             const { comment } = req.body;
-            const newComment = new Comment({ author: req.user.email, comment: comment, timestamp: new Date() });
-
-            const race = await Races.findById(racesId)
+            const newComment = new Comment_1.Comment({ author: req.user.email, comment: comment, timestamp: new Date() });
+            const race = yield Races_1.Races.findById(racesId);
             if (!race) {
                 res.status(404).send('Race not found');
-            } else {
+            }
+            else {
                 race.comments.push(newComment);
                 race.save();
                 console.log('Comment successfully created.');
                 res.status(200).send(newComment);
             }
-        } else {
+        }
+        else {
             res.status(500).send('User is not logged in.');
         }
-    });
-
+    }));
     // Delete comment
-    router.delete('/delete_comment/:racesId/:commentId', async (req: Request, res: Response) => {
+    router.delete('/delete_comment/:racesId/:commentId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const { racesId, commentId } = req.params;
-
-        const race = await Races.findById(racesId);
+        const race = yield Races_1.Races.findById(racesId);
         if (race) {
-            const updatedRace = await Races.findByIdAndUpdate(
-                racesId,
-                { $pull: { comments: { _id: commentId } } },
-                { new: true }
-            );
+            const updatedRace = yield Races_1.Races.findByIdAndUpdate(racesId, { $pull: { comments: { _id: commentId } } }, { new: true });
             res.status(200).send('Comment successfully deleted.');
-        } else {
+        }
+        else {
             res.status(404).send('Comment not found.');
         }
-        
-    });
-
+    }));
     // Edit comment
-    router.put('/edit_comment/:racesId/:commentId', async (req: Request, res: Response) => {
+    router.put('/edit_comment/:racesId/:commentId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const { racesId, commentId } = req.params;
         const { comment } = req.body;
-
-        const race = await Races.findById(racesId);
+        const race = yield Races_1.Races.findById(racesId);
         if (race) {
-            const updatedRace = await Races.findOneAndUpdate(
-                { _id: racesId, 'comments._id': commentId },
-                { $set: { 'comments.$.comment': comment } },
-                { new: true }
-            );
+            const updatedRace = yield Races_1.Races.findOneAndUpdate({ _id: racesId, 'comments._id': commentId }, { $set: { 'comments.$.comment': comment } }, { new: true });
             res.status(200).send('Comment successfully edited.');
-        } else {
+        }
+        else {
             res.status(404).send('Race or Comment not found.');
         }
-    });
-
+    }));
     // Like Comment
     // router.put('/like_comment/:topicId/:commentId', async (req: Request, res: Response) => {
     //     const { topicId, commentId } = req.params;
@@ -391,7 +385,6 @@ export const configureRoutes = (passport: PassportStatic, router: Router): Route
     //         res.status(500).send('User is not logged in.');
     //     }
     // });
-
     // Dislike Comment
     // router.put('/dislike_comment/:topicId/:commentId', async (req: Request, res: Response) => {
     //     const { topicId, commentId } = req.params;
@@ -417,6 +410,6 @@ export const configureRoutes = (passport: PassportStatic, router: Router): Route
     //         res.status(500).send('User is not logged in.');
     //     }
     // });
-
     return router;
-}
+};
+exports.configureRoutes = configureRoutes;

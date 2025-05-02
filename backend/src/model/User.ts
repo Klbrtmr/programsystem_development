@@ -3,9 +3,8 @@ import bcrypt from 'bcrypt';
 
 export interface IUser extends Document {
     email: string;
+    username: string;
     name: string;
-    address: string;
-    nickname: string;
     password: string;
     isAdmin: boolean;
     comparePassword: (candidatePassword: string, callback: (error: Error | null, isMatch: boolean) => void) => void;
@@ -13,9 +12,8 @@ export interface IUser extends Document {
 
 export const UserSchema: Schema<IUser> = new mongoose.Schema({
     email: { type: String, required: true },
+    username: { type: String, required: false },
     name: { type: String, required: false },
-    address: { type: String, required: false },
-    nickname: { type: String, required: false },
     password: { type: String, required: true },
     isAdmin: { type: Boolean, required: true}
 });
@@ -58,17 +56,15 @@ declare global {
     namespace Express {
         export interface User {
             email: string;
+            username: string;
             name: string;
-            address: string;
-            nickname: string;
             password: string;
             isAdmin: boolean;
 
-            /*constructor(email: string, name: string, address: string, nickname: string, password: string, isAdmin: boolean) {
+            /*constructor(email: string, username: string, name: string, password: string, isAdmin: boolean) {
                 this.email = email;
+                this.username = username;
                 this.name = name;
-                this.address = address;
-                this.nickname = nickname;
                 this.password = password;
                 this.isAdmin = isAdmin;
             }*/

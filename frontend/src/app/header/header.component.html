@@ -1,0 +1,16 @@
+<div class="navbar">
+    <div class="left-side">
+        <span>F1</span>
+    </div>
+    <div class="right-side">
+        <div class="buttons">
+            <button (click)="navigate('/races')">Main page</button>
+            <!-- <button (click)="navigate('/my-topics')" *ngIf="isAuthenticated">My Topics</button> -->
+            <button (click)="navigate('/user-management')" *ngIf="isAuthenticated && isAdmin">User Management</button>
+            
+            <button (click)="navigate('/login')" *ngIf="!isAuthenticated">Sign in</button>
+            <button (click)="navigate('/register')" *ngIf="!isAuthenticated">Register</button>
+            <button (click)="logout()" *ngIf="isAuthenticated" type="reset">Log out</button>
+        </div>
+    </div>
+</div>
