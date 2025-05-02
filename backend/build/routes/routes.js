@@ -218,26 +218,24 @@ const configureRoutes = (passport, router) => {
             res.status(404).send('Race not found.');
         }
     }));
-    // Edit Topic
-    // router.put('/edit_topic/:topicId', async (req: Request, res: Response) => {
-    //     const { topicId } = req.params;
-    //     const { title } = req.body;
-    //     if (req.isAuthenticated()) {
-    //         const topic = await Topic.findById(topicId);
-    //         if (topic) {
-    //             const updatedTopic = await Topic.findOneAndUpdate(
-    //                 { _id: topicId },
-    //                 { $set: { 'title': title } },
-    //                 { new: true }
-    //             );
-    //             res.status(200).send('Topic successfully edited.');
-    //         } else {
-    //             res.status(404).send('Topic not found.');
-    //         }
-    //     } else {
-    //         res.status(500).send('User is not logged in.');
-    //     }
-    // });
+    // Edit Race
+    router.put('/edit_races/:racesId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        const { racesId } = req.params;
+        const { trackName, locationName } = req.body;
+        if (req.isAuthenticated()) {
+            const race = yield Races_1.Races.findById(racesId);
+            if (race) {
+                const updatedRace = yield Races_1.Races.findOneAndUpdate({ _id: racesId }, { $set: { 'trackName': trackName, 'locationName': locationName } }, { new: true });
+                res.status(200).send('Race successfully edited.');
+            }
+            else {
+                res.status(404).send('Race not found.');
+            }
+        }
+        else {
+            res.status(500).send('User is not logged in.');
+        }
+    }));
     // Like Race
     router.put('/like_races/:racesId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const { racesId } = req.params;

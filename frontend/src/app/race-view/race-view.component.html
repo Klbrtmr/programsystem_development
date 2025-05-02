@@ -14,8 +14,8 @@
                             <hr>
                             <div>
                                 <span>{{races?.date | date: 'yyyy.MM.dd HH:mm' }}</span>
-                                <span  *ngIf="hasUserLikedRaces(topic!)">You <span *ngIf="races!.usersLikesRaces.length > 1">and {{races!.usersLikesRaces.length - 1}} </span>liked this</span>
-                                <span  *ngIf="!hasUserLikedRaces(topic!)"><span *ngIf="races!.usersLikesRaces.length > 0">{{races!.usersLikesRaces.length}} liked this</span></span>
+                                <span  *ngIf="hasUserLikedRaces(races!)">You <span *ngIf="races!.usersLikesRaces.length > 1">and {{races!.usersLikesRaces.length - 1}} </span>liked this</span>
+                                <span  *ngIf="!hasUserLikedRaces(races!)"><span *ngIf="races!.usersLikesRaces.length > 0">{{races!.usersLikesRaces.length}} liked this</span></span>
                             </div>
                         </mat-card-footer>
                     </mat-card>

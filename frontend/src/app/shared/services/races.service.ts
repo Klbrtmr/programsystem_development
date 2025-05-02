@@ -39,9 +39,10 @@ export class RacesService {
     return this.http.delete(`http://localhost:3000/app/delete_race/${racesId}`, {withCredentials: true, responseType: 'text'});
   }
 
-  editRace(racesId: string, title: string) {
+  editRace(racesId: string, trackName: string, locationName: string) {
     const body = new URLSearchParams();
-    body.set('title', title);
+    body.set('trackName', trackName);
+    body.set('locationName', locationName);
 
     const headers = new HttpHeaders({
       'Content-Type': 'application/x-www-form-urlencoded'

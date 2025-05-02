@@ -212,26 +212,26 @@ export const configureRoutes = (passport: PassportStatic, router: Router): Route
         }
     });
     
-    // Edit Topic
-    // router.put('/edit_topic/:topicId', async (req: Request, res: Response) => {
-    //     const { topicId } = req.params;
-    //     const { title } = req.body;
-    //     if (req.isAuthenticated()) {
-    //         const topic = await Topic.findById(topicId);
-    //         if (topic) {
-    //             const updatedTopic = await Topic.findOneAndUpdate(
-    //                 { _id: topicId },
-    //                 { $set: { 'title': title } },
-    //                 { new: true }
-    //             );
-    //             res.status(200).send('Topic successfully edited.');
-    //         } else {
-    //             res.status(404).send('Topic not found.');
-    //         }
-    //     } else {
-    //         res.status(500).send('User is not logged in.');
-    //     }
-    // });
+    // Edit Race
+    router.put('/edit_races/:racesId', async (req: Request, res: Response) => {
+        const { racesId } = req.params;
+        const { trackName, locationName } = req.body;
+        if (req.isAuthenticated()) {
+            const race = await Races.findById(racesId);
+            if (race) {
+                const updatedRace = await Races.findOneAndUpdate(
+                    { _id: racesId },
+                    { $set: { 'trackName': trackName, 'locationName': locationName } },
+                    { new: true }
+                );
+                res.status(200).send('Race successfully edited.');
+            } else {
+                res.status(404).send('Race not found.');
+            }
+        } else {
+            res.status(500).send('User is not logged in.');
+        }
+    });
 
     // Like Race
     router.put('/like_races/:racesId', async (req: Request, res: Response) => {

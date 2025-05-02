@@ -209,7 +209,7 @@ export class RaceViewComponent {
       });
     }*/
   
-    hasUserLikedRace(races: Races): boolean {
+    hasUserLikedRaces(races: Races): boolean {
       if (!races!.usersLikesRaces) return false;
       if (races!.usersLikesRaces && races.usersLikesRaces.length === 0) return false;
       return races.usersLikesRaces.some(user => user.username === this.currentUser?.email);
