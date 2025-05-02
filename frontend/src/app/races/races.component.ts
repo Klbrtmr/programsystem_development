@@ -23,7 +23,7 @@ export class RacesComponent {
   isAdmin?: boolean;
   isEditMode: boolean = false;
   selectedRaceToEdit: string = '';
-  editedTrackName: string = '';
+  editedLocationName: string = '';
 
   constructor(private racesService: RacesService,
     private authService: AuthService,
@@ -77,27 +77,27 @@ export class RacesComponent {
       this.isEditMode = !this.isEditMode;
       if (this.isEditMode) {
         this.selectedRaceToEdit = racesId;
-        this.editedTrackName = this.races!.find(races => races._id === racesId)!.trackName;
+        this.editedLocationName = this.races!.find(races => races._id === racesId)!.locationName;
       } else {
         this.selectedRaceToEdit = '';
-        this.editedTrackName = '';
+        this.editedLocationName = '';
       }
     }
   
     editModeOff() {
       this.isEditMode = false;
       this.selectedRaceToEdit = '';
-      this.editedTrackName = '';
+      this.editedLocationName = '';
     }
   
     editRace(racesId: string) {
-      if (this.races!.find(races => races._id === racesId)!.trackName !== this.editedTrackName) {
-        this.racesService.editRace(racesId, this.editedTrackName).subscribe({
+      if (this.races!.find(races => races._id === racesId)!.locationName !== this.editedLocationName) {
+        this.racesService.editRace(racesId, this.editedLocationName).subscribe({
           next: (data) => {
             console.log(data);
             this.races = this.races!.map(races => {
               if (races._id === racesId) {
-                races.trackName = this.editedTrackName;
+                races.trackName = this.editedLocationName;
               }
               return races;
             });

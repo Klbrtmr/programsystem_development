@@ -15,7 +15,7 @@
                 <td>{{race.trackName}}</td>
                 <td *ngIf="!isEditMode" class="links" (click)="navigate(race._id)"><a>{{race.locationName}}</a></td>
                 <td *ngIf="isEditMode && race._id !== selectedRaceToEdit">{{race.locationName}}</td>
-                <td *ngIf="isEditMode && race._id === selectedRaceToEdit"><input [(ngModel)]="editedTrackName" name="editedTrackName" type="text"></td>
+                <td *ngIf="isEditMode && race._id === selectedRaceToEdit"><input [(ngModel)]="editedLocationName" name="editedLocationName" type="text"></td>
                 <td style="text-align: center;">{{ race.date | date: 'yyyy.MM.dd HH:mm' }}</td>
                 <td *ngIf="isAdmin">
                     <div class="actions">
