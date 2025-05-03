@@ -6,6 +6,18 @@
                     <mat-card>
                         <mat-card-header>Question from {{races?.trackName}}:</mat-card-header>
                         <mat-card-content><h2>{{races?.locationName}}</h2></mat-card-content>
+
+                        <div *ngIf="currentUser?.isAdmin" class="wiki-input">
+                            <mat-card-content>
+                                <span>Wikipedia URL</span>
+                                <textarea name="wikilink" id="wikilink" rows="1" [(ngModel)]="wikipediaUrl"></textarea>
+                            </mat-card-content>
+                            <mat-card-actions><button type="submit" (click)="loadWikipedia()">Load Results</button></mat-card-actions>
+                          </div>
+
+
+
+
                         <mat-card-actions *ngIf="currentUser">
                             <mat-icon *ngIf="!races?.usersLikesRaces || !hasUserLikedRaces(races!)" (click)="likeRace(races!._id)" fontIcon="thumb_up"></mat-icon>
                             <mat-icon *ngIf="!races?.usersLikesRaces || hasUserLikedRaces(races!)" (click)="dislikeRace(races!._id)" fontIcon="thumb_down"></mat-icon>
@@ -23,6 +35,39 @@
             </tr>
         </tbody>
     </table>
+
+    <div style="margin:1em 0;"></div>
+
+    <!-- Wikipedia eredmények megjelenítése -->
+    <div *ngIf="wikiResults && wikiResults.length > 0" class="wiki-results">
+      <h3>Futam eredmények</h3>
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th>Pos</th>
+            <th>Driver</th>
+            <th>Team</th>
+            <th>Time</th>
+            <th>Laps</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of wikiResults">
+            <td>{{ row.position }}</td>
+            <td>{{ row.driver }}</td>
+            <td>{{ row.team }}</td>
+            <td>{{ row.time }}</td>
+            <td>{{ row.laps }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <!-- Téves URL vagy üres eredmény esetén -->
+    <div *ngIf="wikiResults && wikiResults.length === 0" class="no-data">
+      <p>Nincs találat a megadott Wikipedia‐oldalon.</p>
+    </div>
+
 
     <table class="comments-table">
         <tbody *ngIf="comments && comments.length > 0; else noCommentsTemplate">

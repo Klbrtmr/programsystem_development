@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RacesService } from '../shared/services/races.service';
+import { RacesService, RaceResult } from '../shared/services/races.service';
 import { Races } from '../shared/Model/Races';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -11,6 +11,8 @@ import { User } from '../shared/Model/User';
 import { AuthService } from '../shared/services/auth.service';
 import { DialogComponent } from '../shared/components/dialog/dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { Subscription, EMPTY } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'app-race-view',
@@ -28,6 +30,9 @@ export class RaceViewComponent {
   editMode: boolean = false;
   editedComment: string = '';
   selectedCommentToEdit: string = '';
+  wikipediaUrl: string = '';
+  wikiResults: { position: string; driver: string; team: string; time: string; laps: string }[] = [];
+  private subs = new Subscription();
 
   constructor(private authService: AuthService,
     private racesService: RacesService,
@@ -59,6 +64,10 @@ export class RaceViewComponent {
           console.log(err);
         }
       });
+    }
+
+    ngOnDestroy() {
+      this.subs.unsubscribe();
     }
   
     updateRace() {
@@ -218,6 +227,23 @@ export class RaceViewComponent {
     hasUserLikedComment(comment: Comment): boolean {
       return comment.usersLikesComment.some(user => user.username === this.currentUser?.email);
     }*/
+
+
+    loadWikipedia(){
+      if (!this.wikipediaUrl.trim()) {
+        return alert('Adj meg egy érvényes Wikipedia URL-t');
+      }
+      const raceId = this.route.snapshot.paramMap.get('id')!;
+      this.racesService.getRaceResults(raceId, this.wikipediaUrl).pipe(
+        catchError(err => {
+          console.error('Wiki scraping hiba', err);
+          alert('Nem sikerült betölteni az eredményeket.');
+          return EMPTY;
+        })
+      ).subscribe(results => {
+        this.wikiResults = results;
+      });
+    }
   
     navigate(to: string) {
       console.log(to);

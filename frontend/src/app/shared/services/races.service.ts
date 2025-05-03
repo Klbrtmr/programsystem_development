@@ -1,7 +1,16 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Races } from '../Model/Races';
 import { Comment } from '../Model/Comment';
+import { Observable } from 'rxjs';
+
+export interface RaceResult{
+  position: string;
+  driver: string;
+  team: string;
+  time: string;
+  laps: string;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -91,5 +100,21 @@ export class RacesService {
 
   dislikeRace(racesId: string) {
     return this.http.put<Races>(`http://localhost:3000/app/dislike_races/${racesId}`, {}, {withCredentials: true});
+  }
+
+  getRaceResults(raceId: string, wikiUrl: string): Observable<RaceResult[]>{
+    
+    /*
+    const params = new HttpParams().set('wikiUrl', wikiUrl);
+
+    return this.http.get<RaceResult[]>('http://localhost:3000/app/results/${raceId}', {
+      params,
+      withCredentials: true
+    });*/
+
+    return this.http.get<RaceResult[]>(
+      `http://localhost:3000/app/results/${raceId}`,
+      { params: { wikiUrl } }
+    );
   }
 }

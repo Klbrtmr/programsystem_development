@@ -6,6 +6,16 @@ import { Races } from '../model/Races';
 import { Comment } from '../model/Comment';
 import { json } from 'body-parser';
 import { UsersLikesRaces } from '../model/UsersLikesRaces';
+import axios        from 'axios';
+import * as cheerio from 'cheerio';
+
+interface RaceResult {
+    position: string;
+    driver:   string;
+    team:     string;
+    time:     string;
+    laps:     string;
+  }
 
 export const configureRoutes = (passport: PassportStatic, router: Router): Router => {    
 
@@ -417,6 +427,74 @@ export const configureRoutes = (passport: PassportStatic, router: Router): Route
     //         res.status(500).send('User is not logged in.');
     //     }
     // });
+
+    router.get('/results/:raceId', async (req, res) => {
+        const wikiUrl = req.query.wikiUrl as string;
+        if (!wikiUrl) {
+          return res.status(400).json({ message: 'wikiUrl query param missing' });
+        }
+      
+        try {
+          // lehívjuk a teljes HTML-t
+          const { data: html } = await axios.get(wikiUrl);
+          const $ = cheerio.load(html);
+      
+          // 1. Megkeressük a <h2 id="Futam"> elemet
+          const heading = $('h2#Futam').first();
+          if (!heading.length) {
+            return res.status(404).json({ message: '„Futam” szekció nem található' });
+          }
+      
+          // Lekérjük a teljes divet, amiben a h2 van
+            const headingDiv = heading.closest('div.mw-heading');
+            if (!headingDiv.length) {
+              return res.status(404).json({ message: '„Futam” címsor konténer nem található' });
+            }
+        
+            // A div testvérei közül az első table-t keressük
+            const resultsTable = headingDiv.nextAll('table').first();
+            if (!resultsTable.length) {
+              return res.status(404).json({ message: '„Futam” táblázat nem található' });
+            }
+
+        // 3. Feldolgozzuk a sorokat
+        const results: {
+            position: string;
+            driver:   string;
+            team:     string;
+            time:     string;
+            laps:     string;
+          }[] = [];
+
+          resultsTable.find('tr').each((i, tr) => {
+            // vegyük ki a <th> és a <td> cellákat is
+            const cells = $(tr).children('th, td');
+        
+            // ha ez a sor csak header (minden cella <th>), akkor kihagyjuk
+            const thCount = $(tr).find('th').length;
+            if (thCount === cells.length) {
+              return;
+            }
+        
+            // csak akkor, ha legalább 6 cella van (így a 0,2,3,5 indexek biztosan léteznek)
+            if (cells.length >= 6) {
+              results.push({
+                position:   $(cells[0]).text().trim(),  
+                driver:     $(cells[2]).text().trim(),
+                team:       $(cells[3]).text().trim(),
+                time:       $(cells[5]).text().trim(),
+                laps:       $(cells[4]).text().trim()
+              });
+            }
+          });
+      
+          return res.json(results);
+      
+        } catch (err) {
+            console.error('Wikipedia feldolgozási hiba:', err);
+            return res.status(500).json({ message: 'Hiba a Wikipedia feldolgozásakor' });
+          }
+      });
 
     return router;
 }

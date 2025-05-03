@@ -1,4 +1,37 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -8,12 +41,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.configureRoutes = void 0;
 const User_1 = require("../model/User");
 const Races_1 = require("../model/Races");
 const Comment_1 = require("../model/Comment");
 const UsersLikesRaces_1 = require("../model/UsersLikesRaces");
+const axios_1 = __importDefault(require("axios"));
+const cheerio = __importStar(require("cheerio"));
 const configureRoutes = (passport, router) => {
     router.get('/', (req, res) => {
         res.write('The server is available at the moment.');
@@ -408,6 +446,72 @@ const configureRoutes = (passport, router) => {
     //         res.status(500).send('User is not logged in.');
     //     }
     // });
+    router.get('/results/:raceId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        const wikiUrl = req.query.wikiUrl;
+        if (!wikiUrl) {
+            return res.status(400).json({ message: 'wikiUrl query param missing' });
+        }
+        try {
+            // lehívjuk a teljes HTML-t
+            const { data: html } = yield axios_1.default.get(wikiUrl);
+            const $ = cheerio.load(html);
+            // 1. Megkeressük a <h2 id="Futam"> elemet
+            const heading = $('h2#Futam').first();
+            if (!heading.length) {
+                return res.status(404).json({ message: '„Futam” szekció nem található' });
+            }
+            // Lekérjük a teljes divet, amiben a h2 van
+            const headingDiv = heading.closest('div.mw-heading');
+            if (!headingDiv.length) {
+                return res.status(404).json({ message: '„Futam” címsor konténer nem található' });
+            }
+            // A div testvérei közül az első table-t keressük
+            const resultsTable = headingDiv.nextAll('table').first();
+            if (!resultsTable.length) {
+                return res.status(404).json({ message: '„Futam” táblázat nem található' });
+            }
+            // 3. Feldolgozzuk a sorokat
+            const results = [];
+            /*
+                resultsTable.find('tr').each((i, tr) => {
+                  const cols = $(tr).find('td');
+                  // Csak azokat a sorokat dolgozzuk fel, ahol legalább 6 cella van
+                  if (cols.length >= 6) {
+                    results.push({
+                      position: $(cols[0]).text().trim(),
+                      driver:   $(cols[1]).text().trim(),
+                      team:     $(cols[2]).text().trim(),
+                      time:     $(cols[4]).text().trim(),
+                      laps:     $(cols[3]).text().trim()
+                    });
+                  }
+                });*/
+            resultsTable.find('tr').each((i, tr) => {
+                // vegyük ki a <th> és a <td> cellákat is
+                const cells = $(tr).children('th, td');
+                // ha ez a sor csak header (minden cella <th>), akkor kihagyjuk
+                const thCount = $(tr).find('th').length;
+                if (thCount === cells.length) {
+                    return;
+                }
+                // csak akkor, ha legalább 6 cella van (így a 0,2,3,5 indexek biztosan léteznek)
+                if (cells.length >= 6) {
+                    results.push({
+                        position: $(cells[0]).text().trim(),
+                        driver: $(cells[2]).text().trim(),
+                        team: $(cells[3]).text().trim(),
+                        time: $(cells[5]).text().trim(),
+                        laps: $(cells[4]).text().trim()
+                    });
+                }
+            });
+            return res.json(results);
+        }
+        catch (err) {
+            console.error('Wikipedia feldolgozási hiba:', err);
+            return res.status(500).json({ message: 'Hiba a Wikipedia feldolgozásakor' });
+        }
+    }));
     return router;
 };
 exports.configureRoutes = configureRoutes;
