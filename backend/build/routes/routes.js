@@ -446,7 +446,7 @@ const configureRoutes = (passport, router) => {
     //         res.status(500).send('User is not logged in.');
     //     }
     // });
-    router.get('/results/:raceId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    router.get('/results/:racesId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const wikiUrl = req.query.wikiUrl;
         if (!wikiUrl) {
             return res.status(400).json({ message: 'wikiUrl query param missing' });
@@ -472,20 +472,6 @@ const configureRoutes = (passport, router) => {
             }
             // 3. Feldolgozzuk a sorokat
             const results = [];
-            /*
-                resultsTable.find('tr').each((i, tr) => {
-                  const cols = $(tr).find('td');
-                  // Csak azokat a sorokat dolgozzuk fel, ahol legalább 6 cella van
-                  if (cols.length >= 6) {
-                    results.push({
-                      position: $(cols[0]).text().trim(),
-                      driver:   $(cols[1]).text().trim(),
-                      team:     $(cols[2]).text().trim(),
-                      time:     $(cols[4]).text().trim(),
-                      laps:     $(cols[3]).text().trim()
-                    });
-                  }
-                });*/
             resultsTable.find('tr').each((i, tr) => {
                 // vegyük ki a <th> és a <td> cellákat is
                 const cells = $(tr).children('th, td');
@@ -510,6 +496,55 @@ const configureRoutes = (passport, router) => {
         catch (err) {
             console.error('Wikipedia feldolgozási hiba:', err);
             return res.status(500).json({ message: 'Hiba a Wikipedia feldolgozásakor' });
+        }
+    }));
+    /*
+    router.put('/races/:raceId/wiki', async (req: Request, res: Response) => {
+      const raceId = req.params.raceId;
+      // const { wikipediaUrl } = req.body;
+      const { wikipediaUrl } = req.body as { wikipediaUrl?: string };
+      console.log('wikipediaUrl:', wikipediaUrl);
+      // const wikipediaUrl = req.query.wikiUrl as string;
+      if (!wikipediaUrl || typeof wikipediaUrl !== 'string') {
+        return res.status(400).json({ message: 'Hiányzó vagy érvénytelen wikipediaUrl' });
+      }
+      try {
+        const updated = await Races.findByIdAndUpdate(
+          raceId,
+          { wikipediaUrl },
+          { new: true }
+        );
+        if (!updated) return res.status(404).json({ message: 'Race nem található' });
+        return res.json(updated);
+      } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Hiba a wikiUrl mentésekor' });
+      }
+    });*/
+    router.put('/race_update/:racesId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        const { racesId } = req.params;
+        console.log('racesId:', racesId);
+        // const { wikipediaUrl } = req.body;
+        const wikipediaUrl = req.query.wikiUrl;
+        console.log('wikipediaUrl:', wikipediaUrl);
+        // const wikipediaUrl = req.query.wikiUrl as string;
+        // if (!wikipediaUrl || typeof wikipediaUrl !== 'string') {
+        //   return res.status(400).json({ message: 'Hiányzó vagy érvénytelen wikipediaUrl' });
+        // }
+        try {
+            const race = yield Races_1.Races.findById(racesId);
+            if (race) {
+                const updatedRace = yield Races_1.Races.findOneAndUpdate({ _id: racesId }, { $set: { 'wikipediaUrl': wikipediaUrl } }, { new: true });
+                // res.status(200).send('Race successfully edited.');
+                return res.json(updatedRace);
+            }
+            else {
+                res.status(404).send('Race not found.');
+            }
+        }
+        catch (err) {
+            console.error(err);
+            return res.status(500).json({ message: 'Hiba a wikiUrl mentésekor' });
         }
     }));
     return router;

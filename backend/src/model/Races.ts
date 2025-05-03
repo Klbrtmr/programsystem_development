@@ -8,6 +8,7 @@ interface IRaces extends Document {
     date: string;
     comments: IComment[];
     usersLikesRaces: IUsersLikesRaces[];
+    wikipediaUrl?: string;
 }
 
 const RacesSchema: Schema<IRaces> = new mongoose.Schema({
@@ -15,7 +16,8 @@ const RacesSchema: Schema<IRaces> = new mongoose.Schema({
     locationName: { type: String, required: true },
     date: { type: String, required: true },
     comments: [CommentSchema],
-    usersLikesRaces: [UsersLikesRacesSchema]
+    usersLikesRaces: [UsersLikesRacesSchema],
+    wikipediaUrl:   { type: String, default: '' }
 });
 
 export const Races: Model<IRaces> = mongoose.model<IRaces>('Races', RacesSchema);

@@ -103,18 +103,16 @@ export class RacesService {
   }
 
   getRaceResults(raceId: string, wikiUrl: string): Observable<RaceResult[]>{
-    
-    /*
-    const params = new HttpParams().set('wikiUrl', wikiUrl);
-
-    return this.http.get<RaceResult[]>('http://localhost:3000/app/results/${raceId}', {
-      params,
-      withCredentials: true
-    });*/
-
-    return this.http.get<RaceResult[]>(
-      `http://localhost:3000/app/results/${raceId}`,
-      { params: { wikiUrl } }
-    );
+    return this.http.get<RaceResult[]>(`http://localhost:3000/app/results/${raceId}`, { params: { wikiUrl } });
   }
+
+/*
+  updateWikipediaLink(raceId: string, wikiUrl: string) {
+    return this.http.put<Races>(`http://localhost:3000/app/race_update/${raceId}`, { params: { wikiUrl }});
+  }*/
+
+    updateWikipediaLink(raceId: string, wikiUrl: string) {
+      return this.http.put<Races>(`http://localhost:3000/app/race_update/${raceId}`, {}, { params: { wikiUrl }, withCredentials: true });
+    }
+
 }

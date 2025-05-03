@@ -7,4 +7,5 @@ export interface Races {
     date: Date;
     comments: Comment[];
     usersLikesRaces: UsersLikesRaces[];
+    wikipediaUrl: string;
 }

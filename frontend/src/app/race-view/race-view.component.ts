@@ -50,6 +50,13 @@ export class RaceViewComponent {
           comment.comment = comment.comment.replace(/<img/g, '<img width="90%"');
         });
         console.log(data);
+
+        if (data.wikipediaUrl) {
+          this.wikipediaUrl = data.wikipediaUrl;
+          this.loadWikipedia();
+        }
+
+
       }, (err) => {
         console.log(err);
         this.router.navigateByUrl('/races');
@@ -229,7 +236,7 @@ export class RaceViewComponent {
     }*/
 
 
-    loadWikipedia(){
+    loadWikipedia() {
       if (!this.wikipediaUrl.trim()) {
         return alert('Adj meg egy érvényes Wikipedia URL-t');
       }
@@ -242,8 +249,12 @@ export class RaceViewComponent {
         })
       ).subscribe(results => {
         this.wikiResults = results;
+        this.racesService.updateWikipediaLink(raceId, this.wikipediaUrl).subscribe({
+          next: updatedRace => console.log('WikiUrl mentve:', updatedRace.wikipediaUrl),
+          error: err => console.error('WikiUrl mentése sikertelen', err)
       });
-    }
+    });
+  }
   
     navigate(to: string) {
       console.log(to);

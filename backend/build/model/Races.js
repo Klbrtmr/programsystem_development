@@ -12,6 +12,7 @@ const RacesSchema = new mongoose_1.default.Schema({
     locationName: { type: String, required: true },
     date: { type: String, required: true },
     comments: [Comment_1.CommentSchema],
-    usersLikesRaces: [UsersLikesRaces_1.UsersLikesRacesSchema]
+    usersLikesRaces: [UsersLikesRaces_1.UsersLikesRacesSchema],
+    wikipediaUrl: { type: String, default: '' }
 });
 exports.Races = mongoose_1.default.model('Races', RacesSchema);

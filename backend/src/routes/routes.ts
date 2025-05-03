@@ -1,4 +1,4 @@
-import { Router, Request, Response, NextFunction } from 'express';
+import e, { Router, Request, Response, NextFunction } from 'express';
 import { MainClass } from '../main-class';
 import { PassportStatic, deserializeUser } from 'passport';
 import { User } from '../model/User';
@@ -428,7 +428,7 @@ export const configureRoutes = (passport: PassportStatic, router: Router): Route
     //     }
     // });
 
-    router.get('/results/:raceId', async (req, res) => {
+    router.get('/results/:racesId', async (req, res) => {
         const wikiUrl = req.query.wikiUrl as string;
         if (!wikiUrl) {
           return res.status(400).json({ message: 'wikiUrl query param missing' });
@@ -494,6 +494,60 @@ export const configureRoutes = (passport: PassportStatic, router: Router): Route
             console.error('Wikipedia feldolgozási hiba:', err);
             return res.status(500).json({ message: 'Hiba a Wikipedia feldolgozásakor' });
           }
+      });
+
+      /*
+      router.put('/races/:raceId/wiki', async (req: Request, res: Response) => {
+        const raceId = req.params.raceId;  
+        // const { wikipediaUrl } = req.body;
+        const { wikipediaUrl } = req.body as { wikipediaUrl?: string };
+        console.log('wikipediaUrl:', wikipediaUrl);
+        // const wikipediaUrl = req.query.wikiUrl as string;
+        if (!wikipediaUrl || typeof wikipediaUrl !== 'string') {
+          return res.status(400).json({ message: 'Hiányzó vagy érvénytelen wikipediaUrl' });
+        }
+        try {
+          const updated = await Races.findByIdAndUpdate(
+            raceId,
+            { wikipediaUrl },
+            { new: true }
+          );
+          if (!updated) return res.status(404).json({ message: 'Race nem található' });
+          return res.json(updated);
+        } catch (err) {
+          console.error(err);
+          return res.status(500).json({ message: 'Hiba a wikiUrl mentésekor' });
+        }
+      });*/
+
+
+      router.put('/race_update/:racesId', async (req: Request, res: Response) => {
+        const { racesId } = req.params;  
+        console.log('racesId:', racesId);
+        // const { wikipediaUrl } = req.body;
+        const wikipediaUrl = req.query.wikiUrl as string;
+        console.log('wikipediaUrl:', wikipediaUrl);
+        // const wikipediaUrl = req.query.wikiUrl as string;
+        // if (!wikipediaUrl || typeof wikipediaUrl !== 'string') {
+        //   return res.status(400).json({ message: 'Hiányzó vagy érvénytelen wikipediaUrl' });
+        // }
+        try {
+            const race = await Races.findById(racesId);
+            if(race){
+                const updatedRace = await Races.findOneAndUpdate(
+                    { _id: racesId },
+                    { $set: { 'wikipediaUrl': wikipediaUrl } },
+                    { new: true }
+                );
+                // res.status(200).send('Race successfully edited.');
+                return res.json(updatedRace);
+            } else {
+                res.status(404).send('Race not found.');
+            }
+        } catch (err) {
+          console.error(err);
+          return res.status(500).json({ message: 'Hiba a wikiUrl mentésekor' });
+        }
       });
 
     return router;
