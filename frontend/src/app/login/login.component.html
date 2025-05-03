@@ -1,5 +1,6 @@
 <div class="login-container">
     <form class="login-form" (ngSubmit)="login()">
+        <img src="assets/LewisHamilton.jpg" alt="Logo" class="logo" />
         <input [(ngModel)]="email" name="email" type="email" placeholder="Email" />
         <input [(ngModel)]="password" name="password" [type]="showPassword ? 'text' : 'password'" placeholder="Password" />
         <div>
