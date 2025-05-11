@@ -4,7 +4,8 @@
     </div>
     <div class="right-side">
         <div class="buttons">
-            <button (click)="navigate('/races')">Main page</button>
+            <button (click)="navigate('/races')">Races</button>
+            <button (click)="navigate('/drivers')">Drivers</button>
             <!-- <button (click)="navigate('/my-topics')" *ngIf="isAuthenticated">My Topics</button> -->
             <button (click)="navigate('/user-management')" *ngIf="isAuthenticated && isAdmin">User Management</button>
             

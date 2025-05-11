@@ -19,8 +19,8 @@
 
 
                         <mat-card-actions *ngIf="currentUser">
-                            <mat-icon *ngIf="!races?.usersLikesRaces || !hasUserLikedRaces(races!)" (click)="likeRace(races!._id)" fontIcon="thumb_up"></mat-icon>
-                            <mat-icon *ngIf="!races?.usersLikesRaces || hasUserLikedRaces(races!)" (click)="dislikeRace(races!._id)" fontIcon="thumb_down"></mat-icon>
+                            <mat-icon *ngIf="!races?.usersLikesRaces || !hasUserLikedRaces(races!)" (click)="likeRace(races!._id)" svgIcon="empty_heart"></mat-icon>
+                            <mat-icon *ngIf="!races?.usersLikesRaces || hasUserLikedRaces(races!)" (click)="dislikeRace(races!._id)" svgIcon="full_heart"></mat-icon>
                         </mat-card-actions>
                         <mat-card-footer>
                             <hr>

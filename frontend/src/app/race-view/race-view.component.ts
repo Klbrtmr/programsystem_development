@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Comment } from '../shared/Model/Comment';
 import {MatCardModule} from '@angular/material/card';
-import {MatIconModule} from '@angular/material/icon';
+import {MatIconModule, MatIconRegistry} from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { User } from '../shared/Model/User';
 import { AuthService } from '../shared/services/auth.service';
@@ -13,11 +13,12 @@ import { DialogComponent } from '../shared/components/dialog/dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { Subscription, EMPTY } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { BrowserModule, DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-race-view',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatIconModule, FormsModule],
+  imports: [CommonModule, MatCardModule, MatIconModule, BrowserModule, FormsModule],
   templateUrl: './race-view.component.html',
   styleUrl: './race-view.component.scss'
 })
@@ -38,7 +39,18 @@ export class RaceViewComponent {
     private racesService: RacesService,
     private route: ActivatedRoute,
     private router: Router,
-    private dialog: MatDialog) { }
+    private dialog: MatDialog,
+    private iconRegistry: MatIconRegistry,
+    private sanitizer: DomSanitizer) {
+      iconRegistry.addSvgIcon(
+        'empty_heart',
+        sanitizer.bypassSecurityTrustResourceUrl('assets/icons/empty_heart.svg')
+      );
+      iconRegistry.addSvgIcon(
+        'full_heart',
+        sanitizer.bypassSecurityTrustResourceUrl('assets/icons/full_heart.svg')
+      );
+    }
 
     raceSubscription = 
     this.racesService.getRace(this.route.snapshot.paramMap.get('id')!).subscribe(
