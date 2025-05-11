@@ -18,10 +18,24 @@ export interface RaceResult{
 export class RacesService {
 
   constructor(private http: HttpClient) { }
-
+/*
   getAll() {
     return this.http.get<Races[]>('http://localhost:3000/app/all_races', {withCredentials: true});
-  }
+  }*/
+/*
+    getAll(q?: string) {
+      let url = 'http://localhost:3000/all_races'
+      if (q?.trim()) url += `?q=${encodeURIComponent(q)}`
+      return this.http.get<Races[]>(url)
+    }*/
+
+      getAll(q: string = ''): Observable<Races[]> {
+        let params = new HttpParams();
+    if (q.trim()) {
+      params = params.set('q', q.trim());
+    }
+        return this.http.get<Races[]>('http://localhost:3000/app/all_races', { params });
+      }
 
   getRace(racesId: string) {
     return this.http.get<Races>(`http://localhost:3000/app/races/${racesId}`, {withCredentials: true});

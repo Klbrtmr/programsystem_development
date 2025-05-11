@@ -1,7 +1,15 @@
 <app-input-fields *ngIf="isAuthenticated && isAdmin" (races)="recieveRace($event)"></app-input-fields>
-<div [ngClass]="{'userLoggedIn' : isAuthenticated}" class="table-container" *ngIf="races && races.length; else noUsersTemplate">
+<div [ngClass]="{'userLoggedIn' : isAuthenticated}" class="table-container">
     <h1>Races</h1>
-    <table>
+    <div class="search-container">
+                <input
+                  type="text"
+                  [(ngModel)]="searchTerm"
+                  (ngModelChange)="onSearchChange($event)"
+                  placeholder="Keresés helyszín alapján…"
+                  class="search-input"/>
+    </div>
+    <table *ngIf="races && races.length; else noUsersTemplate">
         <thead>
             <tr>
                 <th style="width: 15%;">TrackName</th>

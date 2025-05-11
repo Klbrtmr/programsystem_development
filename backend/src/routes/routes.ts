@@ -167,13 +167,39 @@ export const configureRoutes = (passport: PassportStatic, router: Router): Route
 
     // All Races
     router.get('/all_races', async (req: Request, res: Response) => {
-        const races = await Races.find();
+        const q = (req.query.q as string || '').trim();
+        // const races = await Races.find();
+        let races;
+        /*
+        if (q) {
+            // case‐insensitive startsWith: ^q
+            const regex = new RegExp(`^${q}`, 'i')
+            races = await Races.find({ locationName: regex })
+          } else {
+            races = await Races.find()
+          }*/
+            if (q) {
+                // “StartsWith” keresés case-insensitive módon
+                races = await Races.find({
+                  locationName: { $regex: `^${q}`, $options: 'i' }
+                });
+              } else {
+                races = await Races.find();
+              }
+
+        /*
         if (races) {
             console.log('All the Races successfully retrieved.');
             res.status(200).send(races);
         } else {
             res.status(404).send('No races found.');
-        }
+        }*/
+            if (races) {
+                console.log(q ? `Filtered races by "${q}"` : 'Retrieved all races');
+                return res.status(200).json(races);
+              } else {
+                return res.status(404).send('No races found.');
+              }
     });
 
     // My Topics

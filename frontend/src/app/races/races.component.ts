@@ -26,6 +26,7 @@ export class RacesComponent {
   // editedLocationName: string = '';
   editedTrackName: string = '';
   editedLocationName: string = '';
+  searchTerm: string = '';
 
   constructor(private racesService: RacesService,
     private authService: AuthService,
@@ -33,7 +34,7 @@ export class RacesComponent {
     private dialog: MatDialog) { }
 
     ngOnInit() {
-      this.racesService.getAll().subscribe({
+      this.racesService.getAll(this.searchTerm).subscribe({
         next: (data) => {
           this.races = data;
         }, error: (err) => {
@@ -121,7 +122,17 @@ export class RacesComponent {
     recieveRace(event: any) {
       this.races?.push(event);
     }
-  
+
+    onSearchChange(term: string) {
+      this.searchTerm = term;
+      this.loadRaces();
+    }
+
+    loadRaces() {
+      this.racesService.getAll(this.searchTerm)
+        .subscribe(r => this.races = r);
+    }
+
     navigate(to: string) {
       to = '/races/' + to;
       this.router.navigateByUrl(to);
