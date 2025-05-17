@@ -570,6 +570,9 @@ export const configureRoutes = (passport: PassportStatic, router: Router): Route
 
     const rows: { key: string; value: string }[] = [];
 
+    const imgSrc = table.find('img').attr('src');
+    const imgFull = imgSrc ? (imgSrc.startsWith('http') ? imgSrc : 'https:' + imgSrc) : null;
+
     table.find('tr').each((_, tr) => {
       const $row = $(tr);
 
@@ -591,7 +594,8 @@ export const configureRoutes = (passport: PassportStatic, router: Router): Route
       if (key && value) rows.push({ key, value });
     });
 
-    res.json(rows);
+    res.json({ rows, img: imgFull });
+    
         } catch (err) {
             console.error('Wikipedia feldolgozási hiba:', err);
             return res.status(500).json({ message: 'Hiba a Wikipedia feldolgozásakor' });

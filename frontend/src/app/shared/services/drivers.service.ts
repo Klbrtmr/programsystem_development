@@ -8,6 +8,11 @@ export interface DriverStat{
   value: string;
 }
 
+export interface DriverStatResponse {
+  rows: DriverStat[];
+  img?: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -64,8 +69,8 @@ export class DriversService {
           return this.http.put<Drivers>(`http://localhost:3000/app/dislike_drivers/${driversId}`, {}, {withCredentials: true});
         }
 
-          getDriverStat(driversId: string, wikiUrl: string): Observable<DriverStat[]>{
-              return this.http.get<DriverStat[]>(`http://localhost:3000/app/driver_stat/${driversId}`, { params: { wikiUrl } });
+          getDriverStat(driversId: string, wikiUrl: string): Observable<DriverStatResponse>{
+              return this.http.get<DriverStatResponse>(`http://localhost:3000/app/driver_stat/${driversId}`, { params: { wikiUrl } });
             }
 
             updateWikipediaLink(driversId: string, wikiUrl: string) {

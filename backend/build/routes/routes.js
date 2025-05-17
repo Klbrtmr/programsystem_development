@@ -579,6 +579,8 @@ const configureRoutes = (passport, router) => {
             if (!table.length)
                 return res.status(404).json({ message: 'Infobox nem található' });
             const rows = [];
+            const imgSrc = table.find('img').attr('src');
+            const imgFull = imgSrc ? (imgSrc.startsWith('http') ? imgSrc : 'https:' + imgSrc) : null;
             table.find('tr').each((_, tr) => {
                 const $row = $(tr);
                 /* 1. Címkesor (key) keresése – lehet td.cimke VAGY th */
@@ -598,7 +600,7 @@ const configureRoutes = (passport, router) => {
                 if (key && value)
                     rows.push({ key, value });
             });
-            res.json(rows);
+            res.json({ rows, img: imgFull });
         }
         catch (err) {
             console.error('Wikipedia feldolgozási hiba:', err);

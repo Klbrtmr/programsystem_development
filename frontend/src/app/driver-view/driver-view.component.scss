@@ -168,3 +168,15 @@ mat-card-footer div {
       }
     }
   }
+
+  .driver-photo {
+  display: flex;              // vertikálisan középre teszi a <img>-et
+  justify-content: center;
+  margin: 0;                  // h2 default margók kiütése
+
+  img {
+    max-width: 260px;         // ízlés szerint
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,.12);
+  }
+}

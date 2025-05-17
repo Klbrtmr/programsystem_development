@@ -28,6 +28,7 @@ drivers?: Drivers;
   editMode: boolean = false;
   wikipediaUrl: string = '';
   wikiResults: { key: string; value: string; }[] = [];
+  photoUrl: string | null = null;
   private subs = new Subscription();
 
   constructor(private authService: AuthService,
@@ -150,7 +151,8 @@ drivers?: Drivers;
           return EMPTY;
         })
       ).subscribe(results => {
-        this.wikiResults = results;
+        this.wikiResults = results.rows;
+        this.photoUrl = results.img ?? null;
         this.driversService.updateWikipediaLink(driverId, this.wikipediaUrl).subscribe({
           next: updatedDriver => console.log('WikiUrl mentve:', updatedDriver.wikipediaUrl),
           error: err => console.error('WikiUrl mentése sikertelen', err)

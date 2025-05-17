@@ -5,7 +5,17 @@
                 <div class="card-container">
                     <mat-card>
                         <mat-card-header>{{drivers?.driverName}}:</mat-card-header>
-                        <mat-card-content><h2>{{drivers?.wikipediaUrl}}</h2></mat-card-content>
+                        <mat-card-content>
+                          <h2 class="driver-photo" *ngIf="photoUrl; else showUrl">
+                            <img [src]="photoUrl"
+                              [alt]="drivers?.driverName"
+                              loading="lazy" />
+                            </h2>
+
+                            <ng-template #showUrl>
+                              <h2>{{ drivers?.wikipediaUrl }}</h2>
+                            </ng-template>
+                        </mat-card-content>
 
                         <div *ngIf="currentUser?.isAdmin" class="wiki-input">
                             <mat-card-content>
