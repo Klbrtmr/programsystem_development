@@ -1,0 +1,58 @@
+<div class="table-container">
+    <table class="driver-table">
+        <tbody>
+            <tr>
+                <div class="card-container">
+                    <mat-card>
+                        <mat-card-header>{{drivers?.driverName}}:</mat-card-header>
+                        <mat-card-content><h2>{{drivers?.wikipediaUrl}}</h2></mat-card-content>
+
+                        <div *ngIf="currentUser?.isAdmin" class="wiki-input">
+                            <mat-card-content>
+                                <span>Wikipedia URL</span>
+                                <textarea name="wikilink" id="wikilink" rows="1" [(ngModel)]="wikipediaUrl"></textarea>
+                            </mat-card-content>
+                            <mat-card-actions><button type="submit" (click)="loadWikipedia()">Load Results</button></mat-card-actions>
+                          </div>
+
+                        <mat-card-actions *ngIf="currentUser">
+                            <mat-icon *ngIf="!drivers?.usersLikesDrivers || !hasUserLikedDrivers(drivers!)" (click)="likeDriver(drivers!._id)" svgIcon="empty_heart"></mat-icon>
+                            <mat-icon *ngIf="!drivers?.usersLikesDrivers || hasUserLikedDrivers(drivers!)" (click)="dislikeDriver(drivers!._id)" svgIcon="full_heart"></mat-icon>
+                        </mat-card-actions>
+                        <mat-card-footer>
+                            <hr>
+                            <div>
+                                <span  *ngIf="hasUserLikedDrivers(drivers!)">You <span *ngIf="drivers!.usersLikesDrivers.length > 1">and {{drivers!.usersLikesDrivers.length - 1}} </span>liked this</span>
+                                <span  *ngIf="!hasUserLikedDrivers(drivers!)"><span *ngIf="drivers!.usersLikesDrivers.length > 0">{{drivers!.usersLikesDrivers.length}} liked this</span></span>
+                            </div>
+                        </mat-card-footer>
+                    </mat-card>
+                </div>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Wikipedia eredmények megjelenítése -->
+    <div *ngIf="wikiResults && wikiResults.length > 0" class="wiki-results">
+      <h3>Driver Statistic</h3>
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th>Driver</th>
+            <th>Team</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of wikiResults">
+            <td style="font-weight: bold;">{{ row.key }}</td>
+            <td>{{ row.value }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <!-- Téves URL vagy üres eredmény esetén -->
+    <div *ngIf="wikiResults && wikiResults.length === 0" class="no-data">
+      <p>Nincs találat a megadott Wikipedia‐oldalon.</p>
+    </div>
+</div>

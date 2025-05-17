@@ -4,7 +4,7 @@
             <tr>
                 <div class="card-container">
                     <mat-card>
-                        <mat-card-header>Question from {{races?.trackName}}:</mat-card-header>
+                        <mat-card-header>{{races?.trackName}}:</mat-card-header>
                         <mat-card-content><h2>{{races?.locationName}}</h2></mat-card-content>
 
                         <div *ngIf="currentUser?.isAdmin" class="wiki-input">
@@ -14,9 +14,6 @@
                             </mat-card-content>
                             <mat-card-actions><button type="submit" (click)="loadWikipedia()">Load Results</button></mat-card-actions>
                           </div>
-
-
-
 
                         <mat-card-actions *ngIf="currentUser">
                             <mat-icon *ngIf="!races?.usersLikesRaces || !hasUserLikedRaces(races!)" (click)="likeRace(races!._id)" svgIcon="empty_heart"></mat-icon>
@@ -65,9 +62,8 @@
     
     <!-- Téves URL vagy üres eredmény esetén -->
     <div *ngIf="wikiResults && wikiResults.length === 0" class="no-data">
-      <p>Nincs találat a megadott Wikipedia‐oldalon.</p>
+      <p>Nincs találat a megadott Wikipedia oldalon.</p>
     </div>
-
 
     <table class="comments-table">
         <tbody *ngIf="comments && comments.length > 0; else noCommentsTemplate">
@@ -82,12 +78,6 @@
                                 <textarea *ngIf="editMode && comment._id === selectedCommentToEdit" name="comment" id="comment" rows="5" [(ngModel)]="editedComment"></textarea>
                             </mat-card-content>
                             <mat-card-actions *ngIf="currentUser">
-                                <!--<div>
-                                    <mat-icon (click)="likeComment(comment._id)" fontIcon="thumb_up" *ngIf="!hasUserLikedComment(comment)">asd</mat-icon>
-                                    
-                                    <mat-icon (click)="dislikeComment(comment._id)" fontIcon="thumb_down" *ngIf="hasUserLikedComment(comment)"></mat-icon>
-                                    
-                                </div>-->
                                 <div>
                                     <mat-icon (click)="editModeToggle(comment._id)" *ngIf="!editMode && (currentUser?.email === comment.author || currentUser?.isAdmin)" svgIcon="pencil"></mat-icon>
                                     <mat-icon (click)="editComment(comment._id)" *ngIf="editMode && comment._id === selectedCommentToEdit" svgIcon="check" class="check"></mat-icon>

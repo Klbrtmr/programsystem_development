@@ -224,45 +224,12 @@ export class RaceViewComponent {
         this.editModeOff();
       }
     }
-  /*
-    likeComment(commentId: string) {
-      this.racesService.likeComment(this.races!._id, commentId).subscribe({
-        next: (data) => {
-          console.log(data);
-          if (data) {
-            this.races = data;
-            this.updateRace();
-          }
-        }, error: (err) => {
-          console.log(err);
-        }
-      });
-    }
-  
-    dislikeComment(commentId: string) {
-      this.racesService.dislikeComment(this.races!._id, commentId).subscribe({
-        next: (data) => {
-          console.log(data);
-          if (data) {
-            this.races = data;
-            this.updateRace();
-          }
-        }, error: (err) => {
-          console.log(err);
-        }
-      });
-    }*/
-  
+
     hasUserLikedRaces(races: Races): boolean {
       if (!races!.usersLikesRaces) return false;
       if (races!.usersLikesRaces && races.usersLikesRaces.length === 0) return false;
       return races.usersLikesRaces.some(user => user.username === this.currentUser?.email);
     }
-  /*
-    hasUserLikedComment(comment: Comment): boolean {
-      return comment.usersLikesComment.some(user => user.username === this.currentUser?.email);
-    }*/
-
 
     loadWikipedia() {
       if (!this.wikipediaUrl.trim()) {
@@ -288,7 +255,6 @@ export class RaceViewComponent {
       console.log(to);
       
       this.router.navigateByUrl(to);
-      //this.router.navigateByUrl('/login');
     }
 
 }

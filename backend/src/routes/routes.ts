@@ -3,19 +3,13 @@ import { MainClass } from '../main-class';
 import { PassportStatic, deserializeUser } from 'passport';
 import { User } from '../model/User';
 import { Races } from '../model/Races';
+import { Drivers } from '../model/Drivers';
 import { Comment } from '../model/Comment';
 import { json } from 'body-parser';
 import { UsersLikesRaces } from '../model/UsersLikesRaces';
+import { UsersLikesDrivers } from '../model/UsersLikesDrivers';
 import axios        from 'axios';
 import * as cheerio from 'cheerio';
-
-interface RaceResult {
-    position: string;
-    driver:   string;
-    team:     string;
-    time:     string;
-    laps:     string;
-  }
 
 export const configureRoutes = (passport: PassportStatic, router: Router): Router => {    
 
@@ -156,44 +150,34 @@ export const configureRoutes = (passport: PassportStatic, router: Router): Route
         } catch (error) {
             res.status(500).send('Internal server error.');
         }
-        /*const topic = await Topic.findById(topicId);
-        if (topic) {
-            console.log('Specific topic found.');
-            res.status(200).send(topic);
-        } else {
-            res.status(404).send('Topic not found.');
-        }*/
+    });
+
+    router.get('/drivers/:driversId', async (req: Request, res: Response) => {
+        const { driversId } = req.params;
+        try {
+            const driver = await Drivers.findById(driversId);
+            if (driver) {
+                console.log('Specific driver found.');
+                res.status(200).send(driver);
+            } else {
+                res.status(404).send('Driver not found.');
+            }
+        } catch (error) {
+            res.status(500).send('Internal server error.');
+        }
     });
 
     // All Races
     router.get('/all_races', async (req: Request, res: Response) => {
         const q = (req.query.q as string || '').trim();
-        // const races = await Races.find();
         let races;
-        /*
-        if (q) {
-            // case‐insensitive startsWith: ^q
-            const regex = new RegExp(`^${q}`, 'i')
-            races = await Races.find({ locationName: regex })
-          } else {
-            races = await Races.find()
-          }*/
             if (q) {
-                // “StartsWith” keresés case-insensitive módon
                 races = await Races.find({
                   locationName: { $regex: `^${q}`, $options: 'i' }
                 });
               } else {
                 races = await Races.find();
               }
-
-        /*
-        if (races) {
-            console.log('All the Races successfully retrieved.');
-            res.status(200).send(races);
-        } else {
-            res.status(404).send('No races found.');
-        }*/
             if (races) {
                 console.log(q ? `Filtered races by "${q}"` : 'Retrieved all races');
                 return res.status(200).json(races);
@@ -202,20 +186,25 @@ export const configureRoutes = (passport: PassportStatic, router: Router): Route
               }
     });
 
-    // My Topics
-    // router.get('/my_topics', async (req: Request, res: Response) => {
-    //     if (req.isAuthenticated()) {
-    //         const topics = await Topic.find({ author: req.user.email });
-    //         if (topics) {
-    //             console.log('My Topics successfully retrieved.');
-    //             res.status(200).send(topics);
-    //         } else {
-    //             res.status(404).send('You have not written any topics yet.');
-    //         }
-    //     } else {
-    //         res.status(500).send('User is not logged in.');
-    //     }
-    // });
+    // All Drivers
+    router.get('/all_drivers', async (req: Request, res: Response) => {
+        const q = (req.query.q as string || '').trim();
+        let drivers;
+            if (q) {
+                drivers = await Drivers.find({
+                  driverName: { $regex: `^${q}`, $options: 'i' }
+                });
+              } else {
+                drivers = await Drivers.find();
+              }
+            if (drivers) {
+                console.log(q ? `Filtered drivers by "${q}"` : 'Retrieved all drivers');
+                return res.status(200).json(drivers);
+              } else {
+                return res.status(404).send('No drivers found.');
+              }
+    });
+
 
      // New Race
      router.post('/new_races', (req: Request, res: Response) => {
@@ -237,6 +226,27 @@ export const configureRoutes = (passport: PassportStatic, router: Router): Route
          }
      });
 
+    // New Driver
+     router.post('/new_drivers', (req: Request, res: Response) => {
+         const { driverName, wikipediaUrl} = req.body;
+         if (req.isAuthenticated()) {
+
+             const driver = new Drivers({driverName: driverName, wikipediaUrl: wikipediaUrl});
+             console.log("Create");
+             console.log(driver);
+
+             driver.save().then(data => {
+                 console.log('Driver successfully created.');
+                 res.status(200).send(data);
+             }).catch(error => {
+                 res.status(500).send(error);
+             });
+         } else {
+             res.status(500).send('User is not logged in.');
+         }
+     });
+
+
     // Delete Race
     router.delete('/delete_race/:racesId', async (req: Request, res: Response) => {
         const racesId = req.params.racesId;
@@ -247,7 +257,18 @@ export const configureRoutes = (passport: PassportStatic, router: Router): Route
             res.status(404).send('Race not found.');
         }
     });
-    
+
+    // Delete Driver
+    router.delete('/delete_driver/:driversId', async (req: Request, res: Response) => {
+        const driversId = req.params.racesId;
+        const deletedDriver = await Drivers.findByIdAndDelete(driversId);
+        if (deletedDriver) {
+            res.status(200).send('Driver successfully deleted.')
+        } else {
+            res.status(404).send('Driver not found.');
+        }
+    });
+
     // Edit Race
     router.put('/edit_races/:racesId', async (req: Request, res: Response) => {
         const { racesId } = req.params;
@@ -263,6 +284,27 @@ export const configureRoutes = (passport: PassportStatic, router: Router): Route
                 res.status(200).send('Race successfully edited.');
             } else {
                 res.status(404).send('Race not found.');
+            }
+        } else {
+            res.status(500).send('User is not logged in.');
+        }
+    });
+
+    // Edit Driver
+    router.put('/edit_drivers/:driversId', async (req: Request, res: Response) => {
+        const { driversId } = req.params;
+        const { driverName, wikipediaUrl } = req.body;
+        if (req.isAuthenticated()) {
+            const driver = await Drivers.findById(driversId);
+            if (driver) {
+                const updatedDriver = await Drivers.findOneAndUpdate(
+                    { _id: driversId },
+                    { $set: { 'driverName': driverName, 'wikipediaUrl': wikipediaUrl } },
+                    { new: true }
+                );
+                res.status(200).send('Driver successfully edited.');
+            } else {
+                res.status(404).send('Driver not found.');
             }
         } else {
             res.status(500).send('User is not logged in.');
@@ -286,6 +328,29 @@ export const configureRoutes = (passport: PassportStatic, router: Router): Route
                 }
             } else {
                 res.status(404).send('Race not found.');
+            }
+        } else {
+            res.status(500).send('User is not logged in.');
+        }
+    });
+
+    // Like Driver
+    router.put('/like_drivers/:driversId', async (req: Request, res: Response) => {
+        const { driversId } = req.params;
+
+        if (req.isAuthenticated()) {
+            const username = new UsersLikesDrivers({ username: req.user.email });
+            const driver = await Drivers.findById(driversId);
+            if (driver) {
+                if (driver.usersLikesDrivers.includes(username)) {
+                    res.status(400).send('User already liked this race.');
+                } else {
+                    driver.usersLikesDrivers.push(username);
+                    await driver.save();
+                    res.status(200).send(driver);
+                }
+            } else {
+                res.status(404).send('Driver not found.');
             }
         } else {
             res.status(500).send('User is not logged in.');
@@ -316,6 +381,30 @@ export const configureRoutes = (passport: PassportStatic, router: Router): Route
         }
     });
 
+    // Dislike Driver
+    router.put('/dislike_drivers/:driversId', async (req: Request, res: Response) => {
+        const { driversId } = req.params;
+
+        if (req.isAuthenticated()) {
+            const username = new UsersLikesDrivers({ username: req.user.email });
+            const driver = await Drivers.findById(driversId);
+            if (driver) {
+                const index = driver.usersLikesDrivers.findIndex(user => user.username === username.username);
+                if (index !== -1) {
+                    driver.usersLikesDrivers.splice(index, 1);
+                    await driver.save();
+                    res.status(200).send(driver);
+                } else {
+                    res.status(400).send('User has not liked this driver.');
+                }
+            } else {
+                res.status(404).send('Drivers not found.');
+            }
+        } else {
+            res.status(500).send('User is not logged in.');
+        }
+    });
+
     // Comment endpoints
     // My comments in the Races
     router.get('/my_comments', async (req: Request, res: Response) => {
@@ -323,12 +412,6 @@ export const configureRoutes = (passport: PassportStatic, router: Router): Route
 
         const races = await Races.find();
         if (races) {
-            /*const userComments = races.reduce((acc, races) => {
-                const comments: any = races.comments.filter(comment => comment.author === author);
-                return acc.concat(comments);
-            }, []);
-            console.log(userComments);*/
-
             const userRaces = races.map(races => {
                 const userComments = races.comments.filter(comment => comment.author === author);
                 if (userComments.length > 0) {
@@ -401,59 +484,7 @@ export const configureRoutes = (passport: PassportStatic, router: Router): Route
         }
     });
 
-    // Like Comment
-    // router.put('/like_comment/:topicId/:commentId', async (req: Request, res: Response) => {
-    //     const { topicId, commentId } = req.params;
-    //     if (req.isAuthenticated()) {
-    //         const topic = await Topic.findById(topicId);
-    //         if (topic) {
-    //             const userWhoLiked = new UsersLikesComment({ username: req.user.email });
-    //             const updatedTopic = await Topic.findOneAndUpdate(
-    //                 { _id: topicId, 'comments._id': commentId },
-    //                 { $push: { 'comments.$[comment].usersLikesComment': userWhoLiked } },
-    //                 { 
-    //                     new: true,
-    //                     arrayFilters: [{ 'comment._id': commentId, 'comment.usersLikesComment.username': { $nin: [req.user.email] } }]
-    //                 }
-    //             );
-    //             if (updatedTopic) {
-    //                 console.log('Comment successfully liked.');
-    //                 res.status(200).send(updatedTopic);
-    //             } else {
-    //                 res.status(200).send(topic);
-    //             }
-    //         }
-    //     } else {
-    //         res.status(500).send('User is not logged in.');
-    //     }
-    // });
-
-    // Dislike Comment
-    // router.put('/dislike_comment/:topicId/:commentId', async (req: Request, res: Response) => {
-    //     const { topicId, commentId } = req.params;
-    //     if (req.isAuthenticated()) {
-    //         const topic = await Topic.findById(topicId);
-    //         if (topic) {
-    //             const updatedTopic = await Topic.findOneAndUpdate(
-    //                 { _id: topicId, 'comments._id': commentId, 'comments.usersLikesComment.username': req.user.email },
-    //                 { $pull: { 'comments.$[comment].usersLikesComment': { username: req.user.email } } },
-    //                 {
-    //                     new: true,
-    //                     arrayFilters: [{ 'comment._id': commentId }]
-    //                 }
-    //             );
-    //             if (updatedTopic) {
-    //                 console.log('Comment successfully disliked.');
-    //                 res.status(200).send(updatedTopic);
-    //             } else {
-    //                 res.status(200).send(topic);
-    //             }
-    //         }
-    //     } else {
-    //         res.status(500).send('User is not logged in.');
-    //     }
-    // });
-
+    // Race results
     router.get('/results/:racesId', async (req, res) => {
         const wikiUrl = req.query.wikiUrl as string;
         if (!wikiUrl) {
@@ -522,41 +553,76 @@ export const configureRoutes = (passport: PassportStatic, router: Router): Route
           }
       });
 
-      /*
-      router.put('/races/:raceId/wiki', async (req: Request, res: Response) => {
-        const raceId = req.params.raceId;  
-        // const { wikipediaUrl } = req.body;
-        const { wikipediaUrl } = req.body as { wikipediaUrl?: string };
-        console.log('wikipediaUrl:', wikipediaUrl);
-        // const wikipediaUrl = req.query.wikiUrl as string;
-        if (!wikipediaUrl || typeof wikipediaUrl !== 'string') {
-          return res.status(400).json({ message: 'Hiányzó vagy érvénytelen wikipediaUrl' });
+      // Driver stats
+    router.get('/driver_stat/:driversId', async (req, res) => {
+        const wikiUrl = req.query.wikiUrl as string;
+        if (!wikiUrl) {
+          return res.status(400).json({ message: 'wikiUrl query param missing' });
         }
+      
         try {
-          const updated = await Races.findByIdAndUpdate(
-            raceId,
-            { wikipediaUrl },
-            { new: true }
-          );
-          if (!updated) return res.status(404).json({ message: 'Race nem található' });
-          return res.json(updated);
+          const { data: html } = await axios.get(wikiUrl);
+          const $ = cheerio.load(html);
+      
+          // Például az első infobox táblázatot hozzuk be:
+    const table = $('.infobox').first();
+    if (!table.length) return res.status(404).json({ message: 'Infobox nem található' });
+
+    const rows: { key: string; value: string }[] = [];
+
+    table.find('tr').each((_, tr) => {
+      const $row = $(tr);
+
+      /* 1. Címkesor (key) keresése – lehet td.cimke VAGY th */
+      const $keyCell = $row.children('td.cimke, th').first();
+      if (!$keyCell.length) return;
+
+      /* 2. Érték cellák (value) – minden td, ami nem a címke */
+      const $valueCells = $row.children('td').not($keyCell);
+      if (!$valueCells.length) return;
+
+      /* 3. Szövegek kinyerése és tisztítása */
+      const key = cleanText($keyCell.text());
+      const value = $valueCells
+        .map((_, td) => cleanText($(td).text()))
+        .get()
+        .join(' | ');
+
+      if (key && value) rows.push({ key, value });
+    });
+
+    res.json(rows);
         } catch (err) {
-          console.error(err);
-          return res.status(500).json({ message: 'Hiba a wikiUrl mentésekor' });
-        }
-      });*/
+            console.error('Wikipedia feldolgozási hiba:', err);
+            return res.status(500).json({ message: 'Hiba a Wikipedia feldolgozásakor' });
+          }
+      });
 
 
+function cleanText(txt: string): string {
+    return txt
+      .replace(/\[\d+]/g, '')      // [1]-szerű hivatkozások
+      .replace(/\s+/g, ' ')        // sok szóköz egyre
+      .trim();
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+    // Update race
       router.put('/race_update/:racesId', async (req: Request, res: Response) => {
         const { racesId } = req.params;  
         console.log('racesId:', racesId);
-        // const { wikipediaUrl } = req.body;
         const wikipediaUrl = req.query.wikiUrl as string;
         console.log('wikipediaUrl:', wikipediaUrl);
-        // const wikipediaUrl = req.query.wikiUrl as string;
-        // if (!wikipediaUrl || typeof wikipediaUrl !== 'string') {
-        //   return res.status(400).json({ message: 'Hiányzó vagy érvénytelen wikipediaUrl' });
-        // }
         try {
             const race = await Races.findById(racesId);
             if(race){
@@ -575,6 +641,32 @@ export const configureRoutes = (passport: PassportStatic, router: Router): Route
           return res.status(500).json({ message: 'Hiba a wikiUrl mentésekor' });
         }
       });
+
+      // Update driver
+      router.put('/driver_update/:driversId', async (req: Request, res: Response) => {
+        const { driversId } = req.params;  
+        console.log('driversId:', driversId);
+        // const { wikipediaUrl } = req.body;
+        const wikipediaUrl = req.query.wikiUrl as string;
+        console.log('wikipediaUrl:', wikipediaUrl);
+        try {
+            const driver = await Drivers.findById(driversId);
+            if(driver){
+                const updatedDriver = await Drivers.findOneAndUpdate(
+                    { _id: driversId },
+                    { $set: { 'wikipediaUrl': wikipediaUrl } },
+                    { new: true }
+                );
+                return res.json(updatedDriver);
+            } else {
+                res.status(404).send('Driver not found.');
+            }
+        } catch (err) {
+          console.error(err);
+          return res.status(500).json({ message: 'Hiba a wikiUrl mentésekor' });
+        }
+      });
+
 
     return router;
 }

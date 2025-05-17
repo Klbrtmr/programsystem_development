@@ -60,14 +60,6 @@ declare global {
             name: string;
             password: string;
             isAdmin: boolean;
-
-            /*constructor(email: string, username: string, name: string, password: string, isAdmin: boolean) {
-                this.email = email;
-                this.username = username;
-                this.name = name;
-                this.password = password;
-                this.isAdmin = isAdmin;
-            }*/
         }
     }
 }

@@ -1,0 +1,48 @@
+<app-input-fields *ngIf="isAuthenticated && isAdmin" (drivers)="recieveDriver($event)"></app-input-fields>
+<div [ngClass]="{'userLoggedIn' : isAuthenticated}" class="table-container">
+    <h1>Drivers</h1>
+    <div class="search-container">
+                <input
+                  type="text"
+                  [(ngModel)]="searchTerm"
+                  (ngModelChange)="onSearchChange($event)"
+                  placeholder="Keresés pilóta alapján…"
+                  class="search-input"/>
+    </div>
+    <table *ngIf="drivers && drivers.length; else noUsersTemplate">
+        <thead>
+            <tr>
+                <th style="width: 15%;">DriverName</th>
+                <th style="width: 10%;" *ngIf="isAdmin">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let driver of drivers">
+
+                <td *ngIf="!isEditMode" class="links" (click)="navigate(driver._id)"><a>{{driver.driverName}}</a></td>
+                <td *ngIf="isEditMode && driver._id !== selectedDriverToEdit">{{driver.driverName}}</td>
+                <td *ngIf="isEditMode && driver._id === selectedDriverToEdit"><input [(ngModel)]="editedDriverName" name="editedDriverName" type="text"></td>
+
+                <td *ngIf="isAdmin">
+                    <div class="actions">
+                        <button *ngIf="!isEditMode" (click)="editModeToggle(driver._id)" class="buttons edit-button"><mat-icon svgIcon="pencil"></mat-icon></button>
+                        <button *ngIf="!isEditMode" (click)="deleteDriver(driver._id)" class="buttons"><mat-icon svgIcon="trash"></mat-icon></button>
+                        <button *ngIf="isEditMode && driver._id !== selectedDriverToEdit" (click)="editModeOff()" class="buttons edit-button disable"><mat-icon svgIcon="pencil"></mat-icon></button>
+                        <button *ngIf="isEditMode && driver._id !== selectedDriverToEdit" (click)="editModeOff()" class="buttons disable"><mat-icon svgIcon="trash"></mat-icon></button>
+                        <button *ngIf="isEditMode && driver._id === selectedDriverToEdit" (click)="editDriver(driver._id)" class="buttons check-button"><mat-icon svgIcon="check"></mat-icon></button>
+                        <button *ngIf="isEditMode && driver._id === selectedDriverToEdit" (click)="editModeToggle(driver._id)" class="buttons"><mat-icon svgIcon="cancel"></mat-icon></button>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<ng-template #noUsersTemplate>
+    <div class="no-data-container">
+      <mat-card class="no-data-card" appearance="outlined">
+        <mat-card-content>
+          <p>🚧 No drivers available 🚧</p>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </ng-template>
