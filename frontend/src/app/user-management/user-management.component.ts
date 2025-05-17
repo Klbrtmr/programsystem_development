@@ -5,9 +5,10 @@ import { UserService } from '../shared/services/user.service';
 import { AuthService } from '../shared/services/auth.service';
 import { Router } from '@angular/router';
 import { MatTableModule } from '@angular/material/table';
-import { MatIconModule } from '@angular/material/icon';
+import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { DialogComponent } from '../shared/components/dialog/dialog.component';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-user-management',
@@ -23,7 +24,14 @@ export class UserManagementComponent {
   constructor(private userService: UserService,
               private authService: AuthService,
               private router: Router,
-              private dialog: MatDialog) {}
+              private dialog: MatDialog,
+              private iconRegistry: MatIconRegistry,
+              private sanitizer: DomSanitizer) {
+                iconRegistry.addSvgIcon(
+                  'trash',
+                  sanitizer.bypassSecurityTrustResourceUrl('assets/icons/trash.svg')
+                );
+              } 
 
   ngOnInit() {
     this.userService.getAll().subscribe({

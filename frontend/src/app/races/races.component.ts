@@ -5,11 +5,12 @@ import { Races } from '../shared/Model/Races';
 import { RacesService } from '../shared/services/races.service';
 import { CommonModule } from '@angular/common';
 import { InputFieldsComponent } from './input-fields/input-fields.component';
-import {MatIconModule} from '@angular/material/icon';
+import {MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import {MatCardModule} from '@angular/material/card';
 import { DialogComponent } from '../shared/components/dialog/dialog.component';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-races',
@@ -32,7 +33,26 @@ export class RacesComponent {
   constructor(private racesService: RacesService,
     private authService: AuthService,
     private router: Router,
-    private dialog: MatDialog) { }
+    private dialog: MatDialog,
+    private iconRegistry: MatIconRegistry,
+    private sanitizer: DomSanitizer) {
+        iconRegistry.addSvgIcon(
+          'trash',
+          sanitizer.bypassSecurityTrustResourceUrl('assets/icons/trash.svg')
+        );
+        iconRegistry.addSvgIcon(
+          'pencil',
+          sanitizer.bypassSecurityTrustResourceUrl('assets/icons/pencil.svg')
+        );
+        iconRegistry.addSvgIcon(
+          'cancel',
+          sanitizer.bypassSecurityTrustResourceUrl('assets/icons/cross-circle.svg')
+        );
+        iconRegistry.addSvgIcon(
+          'check',
+          sanitizer.bypassSecurityTrustResourceUrl('assets/icons/check-circle.svg')
+        );
+      }
 
     ngOnInit() {
       this.racesService.getAll(this.searchTerm).subscribe({

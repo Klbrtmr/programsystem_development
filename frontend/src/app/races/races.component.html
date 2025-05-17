@@ -33,12 +33,12 @@
                 
                 <td *ngIf="isAdmin">
                     <div class="actions">
-                        <button *ngIf="!isEditMode" (click)="editModeToggle(race._id)" class="buttons edit-button"><mat-icon fontIcon="edit"></mat-icon></button>
-                        <button *ngIf="!isEditMode" (click)="deleteRace(race._id)" class="buttons"><mat-icon fontIcon="delete"></mat-icon></button>
-                        <button *ngIf="isEditMode && race._id !== selectedRaceToEdit" (click)="editModeOff()" class="buttons edit-button disable"><mat-icon fontIcon="edit"></mat-icon></button>
-                        <button *ngIf="isEditMode && race._id !== selectedRaceToEdit" (click)="editModeOff()" class="buttons disable"><mat-icon fontIcon="delete"></mat-icon></button>
-                        <button *ngIf="isEditMode && race._id === selectedRaceToEdit" (click)="editRace(race._id)" class="buttons check-button"><mat-icon fontIcon="check"></mat-icon></button>
-                        <button *ngIf="isEditMode && race._id === selectedRaceToEdit" (click)="editModeToggle(race._id)" class="buttons"><mat-icon fontIcon="cancel"></mat-icon></button>
+                        <button *ngIf="!isEditMode" (click)="editModeToggle(race._id)" class="buttons edit-button"><mat-icon svgIcon="pencil"></mat-icon></button>
+                        <button *ngIf="!isEditMode" (click)="deleteRace(race._id)" class="buttons"><mat-icon svgIcon="trash"></mat-icon></button>
+                        <button *ngIf="isEditMode && race._id !== selectedRaceToEdit" (click)="editModeOff()" class="buttons edit-button disable"><mat-icon svgIcon="pencil"></mat-icon></button>
+                        <button *ngIf="isEditMode && race._id !== selectedRaceToEdit" (click)="editModeOff()" class="buttons disable"><mat-icon svgIcon="trash"></mat-icon></button>
+                        <button *ngIf="isEditMode && race._id === selectedRaceToEdit" (click)="editRace(race._id)" class="buttons check-button"><mat-icon svgIcon="check"></mat-icon></button>
+                        <button *ngIf="isEditMode && race._id === selectedRaceToEdit" (click)="editModeToggle(race._id)" class="buttons"><mat-icon svgIcon="cancel"></mat-icon></button>
                     </div>
                 </td>
             </tr>
