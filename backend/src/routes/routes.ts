@@ -260,7 +260,7 @@ export const configureRoutes = (passport: PassportStatic, router: Router): Route
 
     // Delete Driver
     router.delete('/delete_driver/:driversId', async (req: Request, res: Response) => {
-        const driversId = req.params.racesId;
+        const driversId = req.params.driversId;
         const deletedDriver = await Drivers.findByIdAndDelete(driversId);
         if (deletedDriver) {
             res.status(200).send('Driver successfully deleted.')

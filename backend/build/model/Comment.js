@@ -9,6 +9,5 @@ exports.CommentSchema = new mongoose_1.default.Schema({
     author: { type: String, required: true },
     comment: { type: String, required: true },
     timestamp: { type: String, required: true },
-    // usersLikesComment: [UsersLikesCommentSchema]
 });
 exports.Comment = mongoose_1.default.model('Comments', exports.CommentSchema);

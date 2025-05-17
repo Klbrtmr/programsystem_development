@@ -302,7 +302,7 @@ const configureRoutes = (passport, router) => {
     }));
     // Delete Driver
     router.delete('/delete_driver/:driversId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-        const driversId = req.params.racesId;
+        const driversId = req.params.driversId;
         const deletedDriver = yield Drivers_1.Drivers.findByIdAndDelete(driversId);
         if (deletedDriver) {
             res.status(200).send('Driver successfully deleted.');
@@ -578,30 +578,17 @@ const configureRoutes = (passport, router) => {
             const table = $('.infobox').first();
             if (!table.length)
                 return res.status(404).json({ message: 'Infobox nem található' });
-            /*
-                const rows: any[] = [];
-                table.find('tr').each((i, tr) => {
-                  const th = $(tr).find('th').text().trim();
-                  const td = $(tr).find('td').text().trim();
-                  if (th || td) rows.push({ key: th, value: td });
-                });*/
-            /*const rows: any[] = [];
-            table.find('tr').each((i, tr) => {
-              const key1 = $(tr).find('td').text().trim();
-              const value1 = $(tr).find('td').text().trim();
-              if (key1) rows.push({ key: key1, value: value1 });
-            });*/
             const rows = [];
             table.find('tr').each((_, tr) => {
                 const $row = $(tr);
                 /* 1. Címkesor (key) keresése – lehet td.cimke VAGY th */
                 const $keyCell = $row.children('td.cimke, th').first();
                 if (!$keyCell.length)
-                    return; // pl. fejezetcím → skip
+                    return;
                 /* 2. Érték cellák (value) – minden td, ami nem a címke */
                 const $valueCells = $row.children('td').not($keyCell);
                 if (!$valueCells.length)
-                    return; // biztos, ami biztos
+                    return;
                 /* 3. Szövegek kinyerése és tisztítása */
                 const key = cleanText($keyCell.text());
                 const value = $valueCells
@@ -612,58 +599,6 @@ const configureRoutes = (passport, router) => {
                     rows.push({ key, value });
             });
             res.json(rows);
-            /*
-                      // 1. Megkeressük a <h2 id="Futam"> elemet
-                      const heading = $('h2#Futam').first();
-                      if (!heading.length) {
-                        return res.status(404).json({ message: '„Futam” szekció nem található' });
-                      }
-                  
-                      // Lekérjük a teljes divet, amiben a h2 van
-                        const headingDiv = heading.closest('div.mw-heading');
-                        if (!headingDiv.length) {
-                          return res.status(404).json({ message: '„Futam” címsor konténer nem található' });
-                        }
-                    
-                        // A div testvérei közül az első table-t keressük
-                        const resultsTable = headingDiv.nextAll('table').first();
-                        if (!resultsTable.length) {
-                          return res.status(404).json({ message: '„Futam” táblázat nem található' });
-                        }
-            
-                    // 3. Feldolgozzuk a sorokat
-                    const results: {
-                        position: string;
-                        driver:   string;
-                        team:     string;
-                        time:     string;
-                        laps:     string;
-                      }[] = [];
-            
-                      resultsTable.find('tr').each((i, tr) => {
-                        // vegyük ki a <th> és a <td> cellákat is
-                        const cells = $(tr).children('th, td');
-                    
-                        // ha ez a sor csak header (minden cella <th>), akkor kihagyjuk
-                        const thCount = $(tr).find('th').length;
-                        if (thCount === cells.length) {
-                          return;
-                        }
-                    
-                        // csak akkor, ha legalább 6 cella van (így a 0,2,3,5 indexek biztosan léteznek)
-                        if (cells.length >= 6) {
-                          results.push({
-                            position:   $(cells[0]).text().trim(),
-                            driver:     $(cells[2]).text().trim(),
-                            team:       $(cells[3]).text().trim(),
-                            time:       $(cells[5]).text().trim(),
-                            laps:       $(cells[4]).text().trim()
-                          });
-                        }
-                      });
-                  
-                      return res.json(results);
-                  */
         }
         catch (err) {
             console.error('Wikipedia feldolgozási hiba:', err);
