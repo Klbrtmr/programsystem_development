@@ -46,7 +46,11 @@
     </table>
 </div>
 <ng-template #noUsersTemplate>
-    <div class="table-container no-data">
-        <p>No races available.</p>
+    <div class="no-data-container">
+      <mat-card class="no-data-card" appearance="outlined">
+        <mat-card-content>
+          <p>🚧 No races available 🚧</p>
+        </mat-card-content>
+      </mat-card>
     </div>
-</ng-template>
+  </ng-template>

@@ -5,7 +5,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Comment } from '../shared/Model/Comment';
 import {MatCardModule} from '@angular/material/card';
-import {MatIconModule} from '@angular/material/icon';
+import {MatIconModule, MatIconRegistry} from '@angular/material/icon';
+// import {MatIconModule} from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { User } from '../shared/Model/User';
 import { AuthService } from '../shared/services/auth.service';
@@ -13,6 +14,7 @@ import { DialogComponent } from '../shared/components/dialog/dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { Subscription, EMPTY } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-race-view',
@@ -38,7 +40,34 @@ export class RaceViewComponent {
     private racesService: RacesService,
     private route: ActivatedRoute,
     private router: Router,
-    private dialog: MatDialog) { }
+    private dialog: MatDialog,
+    private iconRegistry: MatIconRegistry,
+    private sanitizer: DomSanitizer) {
+      iconRegistry.addSvgIcon(
+        'empty_heart',
+        sanitizer.bypassSecurityTrustResourceUrl('assets/icons/empty_heart.svg')
+      );
+      iconRegistry.addSvgIcon(
+        'full_heart',
+        sanitizer.bypassSecurityTrustResourceUrl('assets/icons/full_heart.svg')
+      );
+      iconRegistry.addSvgIcon(
+        'trash',
+        sanitizer.bypassSecurityTrustResourceUrl('assets/icons/trash.svg')
+      );
+      iconRegistry.addSvgIcon(
+        'pencil',
+        sanitizer.bypassSecurityTrustResourceUrl('assets/icons/pencil.svg')
+      );
+      iconRegistry.addSvgIcon(
+        'cancel',
+        sanitizer.bypassSecurityTrustResourceUrl('assets/icons/cross-circle.svg')
+      );
+      iconRegistry.addSvgIcon(
+        'check',
+        sanitizer.bypassSecurityTrustResourceUrl('assets/icons/check-circle.svg')
+      );
+    }
 
     raceSubscription = 
     this.racesService.getRace(this.route.snapshot.paramMap.get('id')!).subscribe(

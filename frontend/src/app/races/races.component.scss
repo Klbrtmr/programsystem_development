@@ -155,3 +155,25 @@ h1 {
     background: #f5f5f5;
   }
   
+.no-data-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;      
+    margin-top: 1rem;
+  }
+  
+  .no-data-card {
+    background: #fafafa;
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  
+    p {
+      margin: 0;
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: #666;
+    }
+  }

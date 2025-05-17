@@ -8,12 +8,13 @@ import { InputFieldsComponent } from './input-fields/input-fields.component';
 import {MatIconModule} from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import {MatCardModule} from '@angular/material/card';
 import { DialogComponent } from '../shared/components/dialog/dialog.component';
 
 @Component({
   selector: 'app-races',
   standalone: true,
-  imports: [CommonModule, InputFieldsComponent, MatIconModule, FormsModule, MatDialogModule],
+  imports: [CommonModule, InputFieldsComponent, MatIconModule, FormsModule, MatDialogModule, MatCardModule],
   templateUrl: './races.component.html',
   styleUrl: './races.component.scss'
 })
