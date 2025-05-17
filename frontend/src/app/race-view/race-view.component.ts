@@ -6,7 +6,6 @@ import { CommonModule } from '@angular/common';
 import { Comment } from '../shared/Model/Comment';
 import {MatCardModule} from '@angular/material/card';
 import {MatIconModule, MatIconRegistry} from '@angular/material/icon';
-// import {MatIconModule} from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { User } from '../shared/Model/User';
 import { AuthService } from '../shared/services/auth.service';
