@@ -59,7 +59,9 @@ const configureRoutes = (passport, router) => {
         res.write('The server is available at the moment.');
         res.status(200).end(`Wow it's working`);
     });
-    // User endpoints
+    // ----------------------------------
+    //#region User endpoints
+    // ----------------------------------
     // Log in
     router.post('/login', (req, res, next) => {
         passport.authenticate('local', (error, user) => {
@@ -179,7 +181,12 @@ const configureRoutes = (passport, router) => {
             res.status(500).send('User is not logged in.');
         }
     });
-    // Race endpoints
+    // ---------------------------------
+    //#endregion
+    // ---------------------------------
+    // --------------------------------
+    //#region Race endpoints
+    // --------------------------------
     // One specific Race
     router.get('/races/:racesId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const { racesId } = req.params;
@@ -191,22 +198,6 @@ const configureRoutes = (passport, router) => {
             }
             else {
                 res.status(404).send('Race not found.');
-            }
-        }
-        catch (error) {
-            res.status(500).send('Internal server error.');
-        }
-    }));
-    router.get('/drivers/:driversId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-        const { driversId } = req.params;
-        try {
-            const driver = yield Drivers_1.Drivers.findById(driversId);
-            if (driver) {
-                console.log('Specific driver found.');
-                res.status(200).send(driver);
-            }
-            else {
-                res.status(404).send('Driver not found.');
             }
         }
         catch (error) {
@@ -233,26 +224,6 @@ const configureRoutes = (passport, router) => {
             return res.status(404).send('No races found.');
         }
     }));
-    // All Drivers
-    router.get('/all_drivers', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-        const q = (req.query.q || '').trim();
-        let drivers;
-        if (q) {
-            drivers = yield Drivers_1.Drivers.find({
-                driverName: { $regex: `^${q}`, $options: 'i' }
-            });
-        }
-        else {
-            drivers = yield Drivers_1.Drivers.find();
-        }
-        if (drivers) {
-            console.log(q ? `Filtered drivers by "${q}"` : 'Retrieved all drivers');
-            return res.status(200).json(drivers);
-        }
-        else {
-            return res.status(404).send('No drivers found.');
-        }
-    }));
     // New Race
     router.post('/new_races', (req, res) => {
         const { trackName, locationName, date } = req.body;
@@ -262,24 +233,6 @@ const configureRoutes = (passport, router) => {
             console.log(race);
             race.save().then(data => {
                 console.log('Race successfully created.');
-                res.status(200).send(data);
-            }).catch(error => {
-                res.status(500).send(error);
-            });
-        }
-        else {
-            res.status(500).send('User is not logged in.');
-        }
-    });
-    // New Driver
-    router.post('/new_drivers', (req, res) => {
-        const { driverName, wikipediaUrl } = req.body;
-        if (req.isAuthenticated()) {
-            const driver = new Drivers_1.Drivers({ driverName: driverName, wikipediaUrl: wikipediaUrl });
-            console.log("Create");
-            console.log(driver);
-            driver.save().then(data => {
-                console.log('Driver successfully created.');
                 res.status(200).send(data);
             }).catch(error => {
                 res.status(500).send(error);
@@ -300,17 +253,6 @@ const configureRoutes = (passport, router) => {
             res.status(404).send('Race not found.');
         }
     }));
-    // Delete Driver
-    router.delete('/delete_driver/:driversId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-        const driversId = req.params.driversId;
-        const deletedDriver = yield Drivers_1.Drivers.findByIdAndDelete(driversId);
-        if (deletedDriver) {
-            res.status(200).send('Driver successfully deleted.');
-        }
-        else {
-            res.status(404).send('Driver not found.');
-        }
-    }));
     // Edit Race
     router.put('/edit_races/:racesId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const { racesId } = req.params;
@@ -323,24 +265,6 @@ const configureRoutes = (passport, router) => {
             }
             else {
                 res.status(404).send('Race not found.');
-            }
-        }
-        else {
-            res.status(500).send('User is not logged in.');
-        }
-    }));
-    // Edit Driver
-    router.put('/edit_drivers/:driversId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-        const { driversId } = req.params;
-        const { driverName, wikipediaUrl } = req.body;
-        if (req.isAuthenticated()) {
-            const driver = yield Drivers_1.Drivers.findById(driversId);
-            if (driver) {
-                const updatedDriver = yield Drivers_1.Drivers.findOneAndUpdate({ _id: driversId }, { $set: { 'driverName': driverName, 'wikipediaUrl': wikipediaUrl } }, { new: true });
-                res.status(200).send('Driver successfully edited.');
-            }
-            else {
-                res.status(404).send('Driver not found.');
             }
         }
         else {
@@ -365,30 +289,6 @@ const configureRoutes = (passport, router) => {
             }
             else {
                 res.status(404).send('Race not found.');
-            }
-        }
-        else {
-            res.status(500).send('User is not logged in.');
-        }
-    }));
-    // Like Driver
-    router.put('/like_drivers/:driversId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-        const { driversId } = req.params;
-        if (req.isAuthenticated()) {
-            const username = new UsersLikesDrivers_1.UsersLikesDrivers({ username: req.user.email });
-            const driver = yield Drivers_1.Drivers.findById(driversId);
-            if (driver) {
-                if (driver.usersLikesDrivers.includes(username)) {
-                    res.status(400).send('User already liked this race.');
-                }
-                else {
-                    driver.usersLikesDrivers.push(username);
-                    yield driver.save();
-                    res.status(200).send(driver);
-                }
-            }
-            else {
-                res.status(404).send('Driver not found.');
             }
         }
         else {
@@ -420,6 +320,186 @@ const configureRoutes = (passport, router) => {
             res.status(500).send('User is not logged in.');
         }
     }));
+    // Race results
+    router.get('/results/:racesId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        const wikiUrl = req.query.wikiUrl;
+        if (!wikiUrl) {
+            return res.status(400).json({ message: 'wikiUrl query param missing' });
+        }
+        try {
+            const { data: html } = yield axios_1.default.get(wikiUrl);
+            const $ = cheerio.load(html);
+            const heading = $('h2#Futam').first();
+            if (!heading.length) {
+                return res.status(404).json({ message: '„Futam” szekció nem található' });
+            }
+            const headingDiv = heading.closest('div.mw-heading');
+            if (!headingDiv.length) {
+                return res.status(404).json({ message: '„Futam” címsor konténer nem található' });
+            }
+            const resultsTable = headingDiv.nextAll('table').first();
+            if (!resultsTable.length) {
+                return res.status(404).json({ message: '„Futam” táblázat nem található' });
+            }
+            const results = [];
+            resultsTable.find('tr').each((i, tr) => {
+                const cells = $(tr).children('th, td');
+                const thCount = $(tr).find('th').length;
+                if (thCount === cells.length) {
+                    return;
+                }
+                if (cells.length >= 6) {
+                    results.push({
+                        position: $(cells[0]).text().trim(),
+                        driver: $(cells[2]).text().trim(),
+                        team: $(cells[3]).text().trim(),
+                        time: $(cells[5]).text().trim(),
+                        laps: $(cells[4]).text().trim()
+                    });
+                }
+            });
+            return res.json(results);
+        }
+        catch (err) {
+            console.error('Wikipedia feldolgozási hiba:', err);
+            return res.status(500).json({ message: 'Hiba a Wikipedia feldolgozásakor' });
+        }
+    }));
+    // Update race
+    router.put('/race_update/:racesId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        const { racesId } = req.params;
+        console.log('racesId:', racesId);
+        const wikipediaUrl = req.query.wikiUrl;
+        console.log('wikipediaUrl:', wikipediaUrl);
+        try {
+            const race = yield Races_1.Races.findById(racesId);
+            if (race) {
+                const updatedRace = yield Races_1.Races.findOneAndUpdate({ _id: racesId }, { $set: { 'wikipediaUrl': wikipediaUrl } }, { new: true });
+                return res.json(updatedRace);
+            }
+            else {
+                res.status(404).send('Race not found.');
+            }
+        }
+        catch (err) {
+            console.error(err);
+            return res.status(500).json({ message: 'Hiba a wikiUrl mentésekor' });
+        }
+    }));
+    // ---------------------------------
+    //#endregion
+    // ---------------------------------
+    // ---------------------------------
+    //#region Driver endpoints
+    // ---------------------------------
+    // One specific Driver
+    router.get('/drivers/:driversId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        const { driversId } = req.params;
+        try {
+            const driver = yield Drivers_1.Drivers.findById(driversId);
+            if (driver) {
+                console.log('Specific driver found.');
+                res.status(200).send(driver);
+            }
+            else {
+                res.status(404).send('Driver not found.');
+            }
+        }
+        catch (error) {
+            res.status(500).send('Internal server error.');
+        }
+    }));
+    // All Drivers
+    router.get('/all_drivers', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        const q = (req.query.q || '').trim();
+        let drivers;
+        if (q) {
+            drivers = yield Drivers_1.Drivers.find({
+                driverName: { $regex: `^${q}`, $options: 'i' }
+            });
+        }
+        else {
+            drivers = yield Drivers_1.Drivers.find();
+        }
+        if (drivers) {
+            console.log(q ? `Filtered drivers by "${q}"` : 'Retrieved all drivers');
+            return res.status(200).json(drivers);
+        }
+        else {
+            return res.status(404).send('No drivers found.');
+        }
+    }));
+    // New Driver
+    router.post('/new_drivers', (req, res) => {
+        const { driverName, wikipediaUrl } = req.body;
+        if (req.isAuthenticated()) {
+            const driver = new Drivers_1.Drivers({ driverName: driverName, wikipediaUrl: wikipediaUrl });
+            console.log("Create");
+            console.log(driver);
+            driver.save().then(data => {
+                console.log('Driver successfully created.');
+                res.status(200).send(data);
+            }).catch(error => {
+                res.status(500).send(error);
+            });
+        }
+        else {
+            res.status(500).send('User is not logged in.');
+        }
+    });
+    // Delete Driver
+    router.delete('/delete_driver/:driversId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        const driversId = req.params.driversId;
+        const deletedDriver = yield Drivers_1.Drivers.findByIdAndDelete(driversId);
+        if (deletedDriver) {
+            res.status(200).send('Driver successfully deleted.');
+        }
+        else {
+            res.status(404).send('Driver not found.');
+        }
+    }));
+    // Edit Driver
+    router.put('/edit_drivers/:driversId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        const { driversId } = req.params;
+        const { driverName, wikipediaUrl } = req.body;
+        if (req.isAuthenticated()) {
+            const driver = yield Drivers_1.Drivers.findById(driversId);
+            if (driver) {
+                const updatedDriver = yield Drivers_1.Drivers.findOneAndUpdate({ _id: driversId }, { $set: { 'driverName': driverName, 'wikipediaUrl': wikipediaUrl } }, { new: true });
+                res.status(200).send('Driver successfully edited.');
+            }
+            else {
+                res.status(404).send('Driver not found.');
+            }
+        }
+        else {
+            res.status(500).send('User is not logged in.');
+        }
+    }));
+    // Like Driver
+    router.put('/like_drivers/:driversId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        const { driversId } = req.params;
+        if (req.isAuthenticated()) {
+            const username = new UsersLikesDrivers_1.UsersLikesDrivers({ username: req.user.email });
+            const driver = yield Drivers_1.Drivers.findById(driversId);
+            if (driver) {
+                if (driver.usersLikesDrivers.includes(username)) {
+                    res.status(400).send('User already liked this race.');
+                }
+                else {
+                    driver.usersLikesDrivers.push(username);
+                    yield driver.save();
+                    res.status(200).send(driver);
+                }
+            }
+            else {
+                res.status(404).send('Driver not found.');
+            }
+        }
+        else {
+            res.status(500).send('User is not logged in.');
+        }
+    }));
     // Dislike Driver
     router.put('/dislike_drivers/:driversId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const { driversId } = req.params;
@@ -445,7 +525,69 @@ const configureRoutes = (passport, router) => {
             res.status(500).send('User is not logged in.');
         }
     }));
-    // Comment endpoints
+    // Driver stats
+    router.get('/driver_stat/:driversId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        const wikiUrl = req.query.wikiUrl;
+        if (!wikiUrl) {
+            return res.status(400).json({ message: 'wikiUrl query param missing' });
+        }
+        try {
+            const { data: html } = yield axios_1.default.get(wikiUrl);
+            const $ = cheerio.load(html);
+            const table = $('.infobox').first();
+            if (!table.length)
+                return res.status(404).json({ message: 'Infobox nem található' });
+            const rows = [];
+            const imgSrc = table.find('img').attr('src');
+            const imgFull = imgSrc ? (imgSrc.startsWith('http') ? imgSrc : 'https:' + imgSrc) : null;
+            table.find('tr').each((_, tr) => {
+                const $row = $(tr);
+                const $keyCell = $row.children('td.cimke, th').first();
+                if (!$keyCell.length)
+                    return;
+                const $valueCells = $row.children('td').not($keyCell);
+                if (!$valueCells.length)
+                    return;
+                const key = cleanText($keyCell.text());
+                const value = $valueCells
+                    .map((_, td) => cleanText($(td).text()))
+                    .get()
+                    .join(' | ');
+                if (key && value)
+                    rows.push({ key, value });
+            });
+            res.json({ rows, img: imgFull });
+        }
+        catch (err) {
+            console.error('Wikipedia feldolgozási hiba:', err);
+            return res.status(500).json({ message: 'Hiba a Wikipedia feldolgozásakor' });
+        }
+    }));
+    // Update driver
+    router.put('/driver_update/:driversId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        const { driversId } = req.params;
+        const wikipediaUrl = req.query.wikiUrl;
+        try {
+            const driver = yield Drivers_1.Drivers.findById(driversId);
+            if (driver) {
+                const updatedDriver = yield Drivers_1.Drivers.findOneAndUpdate({ _id: driversId }, { $set: { 'wikipediaUrl': wikipediaUrl } }, { new: true });
+                return res.json(updatedDriver);
+            }
+            else {
+                res.status(404).send('Driver not found.');
+            }
+        }
+        catch (err) {
+            console.error(err);
+            return res.status(500).json({ message: 'Hiba a wikiUrl mentésekor' });
+        }
+    }));
+    // ---------------------------------
+    //#endregion
+    // ---------------------------------
+    // ---------------------------------
+    //#region Comment endpoints
+    // ---------------------------------
     // My comments in the Races
     router.get('/my_comments', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const { author } = req.body;
@@ -512,151 +654,21 @@ const configureRoutes = (passport, router) => {
             res.status(404).send('Race or Comment not found.');
         }
     }));
-    // Race results
-    router.get('/results/:racesId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-        const wikiUrl = req.query.wikiUrl;
-        if (!wikiUrl) {
-            return res.status(400).json({ message: 'wikiUrl query param missing' });
-        }
-        try {
-            // lehívjuk a teljes HTML-t
-            const { data: html } = yield axios_1.default.get(wikiUrl);
-            const $ = cheerio.load(html);
-            // 1. Megkeressük a <h2 id="Futam"> elemet
-            const heading = $('h2#Futam').first();
-            if (!heading.length) {
-                return res.status(404).json({ message: '„Futam” szekció nem található' });
-            }
-            // Lekérjük a teljes divet, amiben a h2 van
-            const headingDiv = heading.closest('div.mw-heading');
-            if (!headingDiv.length) {
-                return res.status(404).json({ message: '„Futam” címsor konténer nem található' });
-            }
-            // A div testvérei közül az első table-t keressük
-            const resultsTable = headingDiv.nextAll('table').first();
-            if (!resultsTable.length) {
-                return res.status(404).json({ message: '„Futam” táblázat nem található' });
-            }
-            // 3. Feldolgozzuk a sorokat
-            const results = [];
-            resultsTable.find('tr').each((i, tr) => {
-                // vegyük ki a <th> és a <td> cellákat is
-                const cells = $(tr).children('th, td');
-                // ha ez a sor csak header (minden cella <th>), akkor kihagyjuk
-                const thCount = $(tr).find('th').length;
-                if (thCount === cells.length) {
-                    return;
-                }
-                // csak akkor, ha legalább 6 cella van (így a 0,2,3,5 indexek biztosan léteznek)
-                if (cells.length >= 6) {
-                    results.push({
-                        position: $(cells[0]).text().trim(),
-                        driver: $(cells[2]).text().trim(),
-                        team: $(cells[3]).text().trim(),
-                        time: $(cells[5]).text().trim(),
-                        laps: $(cells[4]).text().trim()
-                    });
-                }
-            });
-            return res.json(results);
-        }
-        catch (err) {
-            console.error('Wikipedia feldolgozási hiba:', err);
-            return res.status(500).json({ message: 'Hiba a Wikipedia feldolgozásakor' });
-        }
-    }));
-    // Driver stats
-    router.get('/driver_stat/:driversId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-        const wikiUrl = req.query.wikiUrl;
-        if (!wikiUrl) {
-            return res.status(400).json({ message: 'wikiUrl query param missing' });
-        }
-        try {
-            const { data: html } = yield axios_1.default.get(wikiUrl);
-            const $ = cheerio.load(html);
-            // Például az első infobox táblázatot hozzuk be:
-            const table = $('.infobox').first();
-            if (!table.length)
-                return res.status(404).json({ message: 'Infobox nem található' });
-            const rows = [];
-            const imgSrc = table.find('img').attr('src');
-            const imgFull = imgSrc ? (imgSrc.startsWith('http') ? imgSrc : 'https:' + imgSrc) : null;
-            table.find('tr').each((_, tr) => {
-                const $row = $(tr);
-                /* 1. Címkesor (key) keresése – lehet td.cimke VAGY th */
-                const $keyCell = $row.children('td.cimke, th').first();
-                if (!$keyCell.length)
-                    return;
-                /* 2. Érték cellák (value) – minden td, ami nem a címke */
-                const $valueCells = $row.children('td').not($keyCell);
-                if (!$valueCells.length)
-                    return;
-                /* 3. Szövegek kinyerése és tisztítása */
-                const key = cleanText($keyCell.text());
-                const value = $valueCells
-                    .map((_, td) => cleanText($(td).text()))
-                    .get()
-                    .join(' | ');
-                if (key && value)
-                    rows.push({ key, value });
-            });
-            res.json({ rows, img: imgFull });
-        }
-        catch (err) {
-            console.error('Wikipedia feldolgozási hiba:', err);
-            return res.status(500).json({ message: 'Hiba a Wikipedia feldolgozásakor' });
-        }
-    }));
+    // ---------------------------------
+    //#endregion
+    // ---------------------------------
+    // ---------------------------------
+    //#region Extra functions
+    // ---------------------------------
     function cleanText(txt) {
         return txt
             .replace(/\[\d+]/g, '') // [1]-szerű hivatkozások
             .replace(/\s+/g, ' ') // sok szóköz egyre
             .trim();
     }
-    // Update race
-    router.put('/race_update/:racesId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-        const { racesId } = req.params;
-        console.log('racesId:', racesId);
-        const wikipediaUrl = req.query.wikiUrl;
-        console.log('wikipediaUrl:', wikipediaUrl);
-        try {
-            const race = yield Races_1.Races.findById(racesId);
-            if (race) {
-                const updatedRace = yield Races_1.Races.findOneAndUpdate({ _id: racesId }, { $set: { 'wikipediaUrl': wikipediaUrl } }, { new: true });
-                // res.status(200).send('Race successfully edited.');
-                return res.json(updatedRace);
-            }
-            else {
-                res.status(404).send('Race not found.');
-            }
-        }
-        catch (err) {
-            console.error(err);
-            return res.status(500).json({ message: 'Hiba a wikiUrl mentésekor' });
-        }
-    }));
-    // Update driver
-    router.put('/driver_update/:driversId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-        const { driversId } = req.params;
-        console.log('driversId:', driversId);
-        // const { wikipediaUrl } = req.body;
-        const wikipediaUrl = req.query.wikiUrl;
-        console.log('wikipediaUrl:', wikipediaUrl);
-        try {
-            const driver = yield Drivers_1.Drivers.findById(driversId);
-            if (driver) {
-                const updatedDriver = yield Drivers_1.Drivers.findOneAndUpdate({ _id: driversId }, { $set: { 'wikipediaUrl': wikipediaUrl } }, { new: true });
-                return res.json(updatedDriver);
-            }
-            else {
-                res.status(404).send('Driver not found.');
-            }
-        }
-        catch (err) {
-            console.error(err);
-            return res.status(500).json({ message: 'Hiba a wikiUrl mentésekor' });
-        }
-    }));
+    // ---------------------------------
+    //#endregion
+    // ---------------------------------
     return router;
 };
 exports.configureRoutes = configureRoutes;

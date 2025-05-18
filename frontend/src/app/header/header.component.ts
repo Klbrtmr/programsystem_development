@@ -15,21 +15,6 @@ export class HeaderComponent {
   isAdmin?: boolean;
 
   constructor(private authService: AuthService, private router: Router) {
-    /* this.authService.checkAuth().subscribe({
-      next: (data) => {
-        this.authService.changeAuthStatus(data);
-      }, error: (err) => {
-        console.log('You are currently not logged in.');
-      }
-    }); */
-
-    /* this.authService.isAdmin().subscribe({
-      next: (data) => {
-        this.authService.changeAdminStatus(data);
-      }, error: (err) => {
-        console.log('You are not an admin.');
-      }
-    }); */
 
     authService.checkAuth().subscribe( (data) => {
       this.authService.changeAuthStatus(data);
@@ -64,7 +49,6 @@ export class HeaderComponent {
       next: (data) => {
         console.log(data);
         this.router.navigateByUrl('/login');
-        //this.isAuthenticated = false;
         this.authService.changeAuthStatus(false);
       }, error: (error) => {
         console.log(error);

@@ -6,13 +6,13 @@
                   type="text"
                   [(ngModel)]="searchTerm"
                   (ngModelChange)="onSearchChange($event)"
-                  placeholder="Keresés pilóta alapján…"
+                  placeholder="Search by driver name"
                   class="search-input"/>
     </div>
     <table *ngIf="drivers && drivers.length; else noUsersTemplate">
         <thead>
             <tr>
-                <th style="width: 15%;">DriverName</th>
+                <th style="width: 15%;">Driver Name</th>
                 <th style="width: 10%;" *ngIf="isAdmin">Actions</th>
             </tr>
         </thead>

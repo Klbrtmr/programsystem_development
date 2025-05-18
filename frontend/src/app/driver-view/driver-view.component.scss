@@ -170,12 +170,12 @@ mat-card-footer div {
   }
 
   .driver-photo {
-  display: flex;              // vertikálisan középre teszi a <img>-et
+  display: flex;
   justify-content: center;
-  margin: 0;                  // h2 default margók kiütése
+  margin: 0;                  
 
   img {
-    max-width: 260px;         // ízlés szerint
+    max-width: 260px;         
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0,0,0,.12);
   }

@@ -113,7 +113,6 @@ drivers?: Drivers;
         next: (data) => {
           console.log(data);
           this.drivers = data;
-          //this.updateTopic();
         }, error: (err) => {
           console.log(err);
         }
@@ -125,14 +124,12 @@ drivers?: Drivers;
         next: (data) => {
           console.log(data);
           this.drivers = data;
-          //this.updateTopic();
         }, error: (err) => {
           console.log(err);
         }
       });
     }
 
-  
     hasUserLikedDrivers(drivers: Drivers): boolean {
       if (!drivers!.usersLikesDrivers) return false;
       if (drivers!.usersLikesDrivers && drivers.usersLikesDrivers.length === 0) return false;
