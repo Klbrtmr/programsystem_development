@@ -1,25 +1,4 @@
 <div class="user-management-container">
-    <!--<div class="table-container" *ngIf="users && users.length; else noUsersTemplate">
-        <h1>Users</h1>
-        <table>
-            <thead>
-                <tr>
-                    <th>Email</th>
-                    <th>Name</th>
-                    <th>Address</th>
-                    <th>Nickname</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let user of users">
-                    <td>{{user.email}}</td>
-                    <td>{{user.name}}</td>
-                    <td>{{user.address}}</td>
-                    <td>{{user.nickname}}</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>-->
     <h1>Users</h1>
     <table mat-table [dataSource]="users">
         <ng-container matColumnDef="email">
@@ -47,10 +26,7 @@
         <tr mat-row *matRowDef="let row; columns: columns;"></tr>
     </table>
 </div>
+
 <ng-template #noUsersTemplate>
     <p>No users available.</p>
 </ng-template>
-
-<!--<div class="buttons">
-    <button type="reset" (click)="logout()">Logout</button>
-</div>-->

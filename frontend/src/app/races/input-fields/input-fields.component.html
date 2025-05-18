@@ -1,7 +1,5 @@
 <div class="race-container">
     <h2>Create new race:</h2>
-    <!--<input [(ngModel)]="title" name="title" type="text" placeholder="Title of topic">
-    <button type="submit" (click)="CreateTopic()">Submit</button>-->
     <form class="race-form" (ngSubmit)="CreateRace()">
         <input [(ngModel)]="trackName" name="trackname" type="text" placeholder="Track name of race">
         <input [(ngModel)]="locationName" name="locationName" type="text" placeholder="Location of race">

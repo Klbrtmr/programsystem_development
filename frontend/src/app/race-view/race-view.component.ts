@@ -127,7 +127,6 @@ export class RaceViewComponent {
         next: (data) => {
           console.log(data);
           this.races = data;
-          //this.updateTopic();
         }, error: (err) => {
           console.log(err);
         }
@@ -140,7 +139,6 @@ export class RaceViewComponent {
         next: (data) => {
           console.log(data);
           this.races = data;
-          //this.updateTopic();
         }, error: (err) => {
           console.log(err);
         }
@@ -256,5 +254,4 @@ export class RaceViewComponent {
       
       this.router.navigateByUrl(to);
     }
-
 }

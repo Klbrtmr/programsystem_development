@@ -35,7 +35,6 @@
 
     <div style="margin:1em 0;"></div>
 
-    <!-- Wikipedia eredmények megjelenítése -->
     <div *ngIf="wikiResults?.length; else noDataTemplate"
      class="wiki-results">
         <h3>Race Result</h3>
@@ -43,7 +42,7 @@
         <table class="results-table">
           <thead>
             <tr>
-              <th>Pos</th>
+              <th>Position</th>
               <th>Driver</th>
               <th>Team</th>
               <th>Time</th>
@@ -87,9 +86,7 @@
                                 <hr>
                                 <div>
                                     <span>{{comment.timestamp | date: 'yyyy.MM.dd HH:mm' }}</span>
-                                    <!--<span  *ngIf="!hasUserLikedComment(comment) && comment.usersLikesComment.length > 0">{{comment.usersLikesComment.length}} liked this</span>
-                                    <span  *ngIf="hasUserLikedComment(comment)">You <span *ngIf="comment.usersLikesComment.length > 1">and {{comment.usersLikesComment.length - 1}} </span>liked this</span>
-                                -->    </div>
+                                </div>
                             </mat-card-footer>
                         </mat-card>
                     </div>
@@ -108,7 +105,6 @@
                         <mat-card>
                             <mat-card-header>New comment</mat-card-header>
                             <mat-card-content>
-                                <!--<input type="text" placeholder="What's in your mind?">-->
                                 <textarea name="comment" id="comment" rows="5" [(ngModel)]="commentText"></textarea>
                                 <span *ngIf="scriptTagInComment" class="script-detected">Bro, we don't do that here.</span>
                             </mat-card-content>
@@ -156,7 +152,6 @@
                 <mat-card>
                     <mat-card-header>New comment</mat-card-header>
                     <mat-card-content>
-                        <!--<input type="text" placeholder="What's in your mind?">-->
                         <textarea name="comment" id="comment" rows="5" [(ngModel)]="commentText"></textarea>
                         <span *ngIf="scriptTagInComment" class="script-detected">Bro, we don't do that here.</span>
                     </mat-card-content>
