@@ -18,12 +18,12 @@ div {
 }
 
 .left-side img,
-.logo {                    /* a biztonság kedvéért a .logo class-ra is */
-  height: 30px;            /* vagy amekkora a navbar-ben jól mutat */
-  width: auto;             /* ⬅︎ arány tartása */
-  max-width: 160px;        /* (40 px × 4:1 ≈ 160 px) – így sosem lóg ki */
+.logo {               
+  height: 30px;       
+  width: auto;        
+  max-width: 160px;   
   margin-right: 10px;
-  object-fit: contain;     /* ha valaha másik logót tennél be */
+  object-fit: contain;
 }
 
 .right-side {
