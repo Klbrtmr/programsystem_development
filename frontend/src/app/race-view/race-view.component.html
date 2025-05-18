@@ -4,13 +4,13 @@
             <tr>
                 <div class="card-container">
                     <mat-card>
-                        <mat-card-header>{{races?.trackName}}:</mat-card-header>
+                        <mat-card-header><h3>{{races?.trackName}}</h3></mat-card-header>
                         <mat-card-content><h2>{{races?.locationName}}</h2></mat-card-content>
 
                         <div *ngIf="currentUser?.isAdmin" class="wiki-input">
                             <mat-card-content>
                                 <span>Wikipedia URL</span>
-                                <textarea name="wikilink" id="wikilink" rows="1" [(ngModel)]="wikipediaUrl"></textarea>
+                                <textarea name="wikilink" id="wikilink" rows="1" [(ngModel)]="wikipediaUrl" style="width: 700px;"></textarea>
                             </mat-card-content>
                             <mat-card-actions><button type="submit" (click)="loadWikipedia()">Load Results</button></mat-card-actions>
                           </div>
@@ -22,7 +22,7 @@
                         <mat-card-footer>
                             <hr>
                             <div>
-                                <span>{{races?.date | date: 'yyyy.MM.dd HH:mm' }}</span>
+                                <span>{{races?.date | date: 'yyyy.MM.dd' }}</span>
                                 <span  *ngIf="hasUserLikedRaces(races!)">You <span *ngIf="races!.usersLikesRaces.length > 1">and {{races!.usersLikesRaces.length - 1}} </span>liked this</span>
                                 <span  *ngIf="!hasUserLikedRaces(races!)"><span *ngIf="races!.usersLikesRaces.length > 0">{{races!.usersLikesRaces.length}} liked this</span></span>
                             </div>
@@ -36,33 +36,31 @@
     <div style="margin:1em 0;"></div>
 
     <!-- Wikipedia eredmények megjelenítése -->
-    <div *ngIf="wikiResults && wikiResults.length > 0" class="wiki-results">
-      <h3>Futam eredmények</h3>
-      <table class="results-table">
-        <thead>
-          <tr>
-            <th>Pos</th>
-            <th>Driver</th>
-            <th>Team</th>
-            <th>Time</th>
-            <th>Laps</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let row of wikiResults">
-            <td>{{ row.position }}</td>
-            <td>{{ row.driver }}</td>
-            <td>{{ row.team }}</td>
-            <td>{{ row.time }}</td>
-            <td>{{ row.laps }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    
-    <!-- Téves URL vagy üres eredmény esetén -->
-    <div *ngIf="wikiResults && wikiResults.length === 0" class="no-data">
-      <p>Nincs találat a megadott Wikipedia oldalon.</p>
+    <div *ngIf="wikiResults?.length; else noDataTemplate"
+     class="wiki-results">
+        <h3>Race Result</h3>
+
+        <table class="results-table">
+          <thead>
+            <tr>
+              <th>Pos</th>
+              <th>Driver</th>
+              <th>Team</th>
+              <th>Time</th>
+              <th>Laps</th>
+            </tr>
+          </thead>
+      
+          <tbody>
+            <tr *ngFor="let row of wikiResults">
+              <td>{{ row.position }}</td>
+              <td>{{ row.driver   }}</td>
+              <td>{{ row.team     }}</td>
+              <td>{{ row.time     }}</td>
+              <td>{{ row.laps     }}</td>
+            </tr>
+          </tbody>
+        </table>
     </div>
 
     <table class="comments-table">
@@ -123,14 +121,28 @@
     </table>
 </div>
 
+<ng-template #noDataTemplate>
+  <div class="no-data-container">
+    <mat-card class="no-data-card" appearance="outlined">
+      <mat-card-content>
+        <p>🚧 No race result available 🚧</p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</ng-template>
+
 <ng-template #noCommentsTemplate>
     <tr>
-        <td colspan="3" style="box-shadow: none;">
-            <div class="no-data">
-                <p style="text-align: center;">No comments available.</p>
-            </div>
-        </td>
-    </tr>
+    <td colspan="3" style="box-shadow:none;">
+      <div class="no-data-container">
+        <mat-card class="no-data-card" appearance="outlined">
+          <mat-card-content>
+            <p>🚧 No comments available 🚧</p>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </td>
+  </tr>
     <tr *ngIf="!currentUser">
         <td colspan="3" style="box-shadow: none;">
             <div class="no-data">

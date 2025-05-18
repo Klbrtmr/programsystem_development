@@ -20,7 +20,7 @@
                         <div *ngIf="currentUser?.isAdmin" class="wiki-input">
                             <mat-card-content>
                                 <span>Wikipedia URL</span>
-                                <textarea name="wikilink" id="wikilink" rows="1" [(ngModel)]="wikipediaUrl"></textarea>
+                                <textarea name="wikilink" id="wikilink" rows="1" [(ngModel)]="wikipediaUrl" style="width: 500px;"></textarea>
                             </mat-card-content>
                             <mat-card-actions><button type="submit" (click)="loadWikipedia()">Load Results</button></mat-card-actions>
                           </div>
@@ -43,7 +43,8 @@
     </table>
 
     <!-- Wikipedia eredmények megjelenítése -->
-    <div *ngIf="wikiResults && wikiResults.length > 0" class="wiki-results">
+    <div *ngIf="wikiResults?.length; else noDataTemplate"
+    class="wiki-results">
       <h3>Driver Statistic</h3>
       <table class="results-table">
         <thead>
@@ -60,9 +61,14 @@
         </tbody>
       </table>
     </div>
-    
-    <!-- Téves URL vagy üres eredmény esetén -->
-    <div *ngIf="wikiResults && wikiResults.length === 0" class="no-data">
-      <p>Nincs találat a megadott Wikipedia‐oldalon.</p>
-    </div>
 </div>
+
+<ng-template #noDataTemplate>
+  <div class="no-data-container">
+    <mat-card class="no-data-card" appearance="outlined">
+      <mat-card-content>
+        <p>🚧 No data available 🚧</p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</ng-template>
